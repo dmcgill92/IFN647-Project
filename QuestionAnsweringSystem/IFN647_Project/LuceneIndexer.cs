@@ -50,13 +50,9 @@ namespace IFN647_Project
         {
             foreach( Passage passage in entry.passages)
             {
-                Field passageField = new Field("Passage", passage.passage_text, Field.Store.YES, Field.Index.ANALYZED);
-                NumericField idField = new NumericField("ID", passage.passage_id, Field.Store.YES, true);
-                Field urlField = new Field("URL", passage.url, Field.Store.YES, Field.Index.NOT_ANALYZED);
+                Field field = new Field(TEXT_FN, passage.url + " " + passage.passage_text, Field.Store.YES, Field.Index.ANALYZED_NO_NORMS, Field.TermVector.NO);
                 Document document = new Document();
-                document.Add(passageField);
-                document.Add(idField);
-                document.Add(urlField);
+                document.Add(field);
                 writer.AddDocument(document);
             }
         }
