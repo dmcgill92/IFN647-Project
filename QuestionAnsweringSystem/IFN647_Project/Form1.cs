@@ -57,6 +57,8 @@ namespace IFN647_Project
         {
             entries = jsonParser.ReadJSON(txtCollectionFile.Text);
             myLuceneApp.IndexCollection(txtIndexFile.Text + @"\Index", entries);
+            pnlIndex.Visible = false;
+            pnlSearch.Visible = true;
         }
     }
 }

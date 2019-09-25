@@ -7,6 +7,7 @@ using Lucene.Net.Analysis; // for Analyser
 using Lucene.Net.Documents; // for Document and Field
 using Lucene.Net.Index; //for Index Writer
 using Lucene.Net.Store; //for Directory
+using System.Diagnostics;
 
 namespace IFN647_Project
 {
@@ -28,20 +29,17 @@ namespace IFN647_Project
 
         public void OpenIndex(string indexPath)
         {
-            /* Make sure to pass a new directory that does not exist */
             luceneIndexDirectory = FSDirectory.Open(indexPath);
         }
 
         public void CreateAnalyser()
         {
-            // TODO: Enter code to create the Lucene Analyser 
             analyzer = new SimpleAnalyzer();
         }
 
         public void CreateWriter()
         {
             IndexWriter.MaxFieldLength mfl = new IndexWriter.MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
-            // TODO: Enter code to create the Lucene Writer 
             writer = new IndexWriter(luceneIndexDirectory, analyzer, true, mfl);
 
         }
@@ -59,6 +57,9 @@ namespace IFN647_Project
 
         public void IndexCollection(string filePath, List<Entry> collection)
         {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
             OpenIndex(filePath);
             CreateAnalyser();
             CreateWriter();
@@ -67,6 +68,8 @@ namespace IFN647_Project
                 AddToIndex(entry);
             }
             CleanUp();
+            watch.Stop();
+            Console.WriteLine("Index Time: {0}", watch.Elapsed.TotalSeconds);
         }
 
         public void CleanUp()
