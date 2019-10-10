@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Lucene.Net.Analysis; // for Analyser
@@ -70,11 +71,7 @@ namespace IFN647_Project
                 foreach (Passage passage in entry.passages)
                 {
 					// Add all text to one field
-                    Field field = new Field(TEXT_FN, "‰" + passage.passage_id + "‰"
-                        + passage.url + "‰" + item +
-                    "‰" + passage.passage_text + "\n" + "\n" + "‰" + passage.is_selected + "‰" + entry.query,
-                    Field.Store.YES, Field.Index.ANALYZED_NO_NORMS, Field.TermVector.NO);
-
+                    Field field = new Field(TEXT_FN, "‰" + passage.url + "‰" + passage.passage_text,Field.Store.YES, Field.Index.ANALYZED_NO_NORMS, Field.TermVector.NO);
                     Document document = new Document();
                     document.Add(field);
                     writer.AddDocument(document);
@@ -109,8 +106,6 @@ namespace IFN647_Project
 		
         public TopDocs SearchForQuery(string querytext, out Query query) // Searches index with query text
         {
-
-			//System.Console.WriteLine("Searching for " + querytext);
 			Stopwatch stopwatch2 = Stopwatch.StartNew();
 			querytext = querytext.ToLower();
             query = parser.Parse(querytext);
@@ -118,9 +113,7 @@ namespace IFN647_Project
 			queryTime = stopwatch2.Elapsed.TotalSeconds.ToString();
 			finalQuery = query.ToString().Replace("Text:","");
             TopDocs results = searcher.Search(query, 100);
-            //System.Console.WriteLine("Number of results is " + results.TotalHits);
             return results;
-
         }
 
 		public List<string> SearchIndex(string queryText)
@@ -129,7 +122,6 @@ namespace IFN647_Project
 			CreateParser();
 			Query query;
 			var retrievedData = DisplayResults(SearchForQuery(queryText, out query), query);
-
 			return retrievedData;
 		}
 
@@ -145,16 +137,34 @@ namespace IFN647_Project
                 string myFieldValue = doc.Get(TEXT_FN).ToString();
 				//Console.WriteLine("Rank " + rank + " score " + scoreDoc.Score + " text " + myFieldValue);
 				//console.writeline("rank " + rank + "\n"+ myfieldvalue);
-				string[] sArray = myFieldValue.Split('‰');
-
-				string previewText = GeneratePreviewText(query, sArray[4]);
-				retrievedResults.Add("‰" + rank + "‰" + scoreDoc.Score + "‰" + previewText + myFieldValue);
+				string[] sArray = myFieldValue.Split(new char[]{'‰'}, StringSplitOptions.RemoveEmptyEntries);
+				string title = GetTitle(sArray[0]);
+				string previewText = GeneratePreviewText(query, sArray[1]);
+				retrievedResults.Add(rank + "‰" + scoreDoc.Score + "‰" + scoreDoc.Doc + "‰" + previewText + "‰" + title + myFieldValue);
 
 
             }
 
             return retrievedResults;
         }
+
+		private string GetTitle(string url)
+		{
+			string[] fragments = url.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+			string title = fragments.Last();
+			fragments = title.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+			if(fragments.Length > 1)
+			{
+				var sorted = fragments.OrderBy(n => n.Length);
+				title = sorted.LastOrDefault();
+			}
+			title = title.Replace('-', ' ');
+			title = title.Replace('_', ' ');
+			TextInfo textInfo = new CultureInfo("en-US",false).TextInfo;
+			title = textInfo.ToTitleCase(title);
+
+			return title;
+		}
 
 		public string GeneratePreviewText(Query q, string text)
 		{
@@ -163,7 +173,12 @@ namespace IFN647_Project
 			Highlighter highlighter = new Highlighter(formatter, scorer);
 			highlighter.TextFragmenter = new SimpleFragmenter(100);
 			TokenStream stream = new SimpleAnalyzer().TokenStream(TEXT_FN, new StringReader(text));
-			return highlighter.GetBestFragments(stream, text, 2, "...");
+			string fragment = highlighter.GetBestFragments(stream, text, 2, "...");
+			if(string.IsNullOrEmpty(fragment))
+			{
+				fragment = text.Substring(0, 100);
+			}
+			return fragment;
 		}
 	}
 }

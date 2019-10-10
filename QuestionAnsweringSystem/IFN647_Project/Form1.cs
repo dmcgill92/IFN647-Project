@@ -17,10 +17,15 @@ namespace IFN647_Project
 {
     public partial class Form1 : Form
     {
+		int numQueries = 0;
 		string indexPath;
         List<Entry> entries;
         private JSONParser jsonParser = new JSONParser();
         LuceneIndexer myLuceneApp = new LuceneIndexer();
+		bool toProcess = true;
+		List<string> relevantDocuments;
+		string groupName = "BaselineSystem";
+
         public Form1()
         {
             InitializeComponent();
@@ -28,7 +33,7 @@ namespace IFN647_Project
         private void Form1_Load(object sender, EventArgs e)
         {
 
-        }
+		}
 
         private void BtnBrowse_Click(object sender, EventArgs e) // Opens file browser, user selects the .json collection
         {
@@ -73,6 +78,10 @@ namespace IFN647_Project
 
 			lblIndexTimeResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
 			pnlIndex.Hide();
+			var location = chkbxProcessing2.Location;
+			chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
+			location = btnSearch2.Location;
+			btnSearch2.Location = new Point(location.X, location.Y - 45);
 			pnlSearch.Show();
 			pnlSearchHome.Show();
         }
@@ -116,6 +125,8 @@ namespace IFN647_Project
 
 		private void BtnSearch_Click(object sender, EventArgs e)
 		{
+			numQueries++;
+			txtQueryResults.Text = string.Empty;
 			if(pnlSearchHome.Visible)
 			{
 				pnlSearchHome.Hide();
@@ -123,13 +134,14 @@ namespace IFN647_Project
 			}
 			dataResults.Rows.Clear();
 			string queryText = txtSearchContent1.Text;
-			List<string> relevantDocuments = new List<string>();
             if (chkbxProcessing1.Checked != true)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 
 				
 				var retrievedData = myLuceneApp.SearchIndex(queryText);
+
+				relevantDocuments = new List<string>(retrievedData);
 				
                 myLuceneApp.CleanUpSearch();
 				lblQueryGenTimeResult.Text = myLuceneApp.queryTime;
@@ -137,36 +149,31 @@ namespace IFN647_Project
 
                 //Data categorize
                 int numRetrieved = retrievedData.Count;
-                Collection mycollect = new Collection(numRetrieved);
                 if (numRetrieved != 0)
                 {
                     for (int i = 0; i < numRetrieved; i++)
                     {
-                        string[] sArray = retrievedData[i].Split('‰');
-                        mycollect.Rank[i] = sArray[1];
-						mycollect.Preview_text[i] = sArray[3];
-                        mycollect.ID[i] = sArray[4];
-                        mycollect.Myurl[i] = sArray[5];
-                        mycollect.Myanswer[i] = sArray[6];
-                        mycollect.Mytext[i] = sArray[7];
-                        mycollect.Selected[i] = sArray[8];
-                        mycollect.Query[i] = sArray[9];
+						string[] sArray = retrievedData[i].Split(new char[] { '‰' });
+						string rank = sArray[0];
+						string score = sArray[1];
+						string docNum = sArray[2];
+						string previewText = sArray[3];
+						string title = sArray[4];
+						string url = sArray[5];
+						string passage = sArray[6];
 
 						if(i<10)
 						{
-							string url = mycollect.Myurl[i];
-							relevantDocuments.Add(mycollect.Mytext[i]);
 
-							dataResults.Rows.Add(mycollect.Rank[i].ToString(), String.Format("{0}\n", mycollect.Myurl[i]) + String.Format("{0}", mycollect.Preview_text[i]));
+							dataResults.Rows.Add(rank, title + "\n" + previewText + "\n" + url);
 						}
 
-                    }
-                    lblNumRelDocsResult.Text = (relevantDocuments.Count).ToString();
-
-                    //Codes to get the sample answer
-                    txtAnswer.Text = "Query: " + mycollect.Query[0] + "\n\n" + "Answer: " + mycollect.Myanswer[0]
-                        + "\n\n" + "Relevant Passage: " + mycollect.Mytext[0];
-                    //---------------------------------------------
+						txtAllResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
+						txtAllResults.AppendText(Environment.NewLine);
+						txtQueryResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
+						txtQueryResults.AppendText(Environment.NewLine);
+					}
+                    lblNumRelDocsResult.Text = numRetrieved.ToString();
                     stopwatch.Stop();
                     lblSearchingTimesResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
                 }
@@ -178,147 +185,142 @@ namespace IFN647_Project
 			pnlSearchHome.Hide();
 			pnlSearch.Show();
         }
-        
-        
 
-        private void Time_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void Processing_choice_CheckedChanged(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void Without_Process_CheckedChanged(object sender, EventArgs e)
-        {
-  
-        }
-
-        private void Searching_time_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void Form1_Load_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Number_result_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void Button3_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void TxtSearch_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void RichTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Save_button_Click(object sender, EventArgs e)
-        {
-            DialogResult result = saveFileDialog1.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                string name = saveFileDialog1.FileName;
-                File.WriteAllText(name, richTextBox2.Text);
-            }
-        }
-
-
-
-        private void SaveFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void RichTextBox2_TextChanged(object sender, EventArgs e)
-        {
-
-
-            
-
-
-
-        }
-
-        private void Coun_time_Click(object sender, EventArgs e)
-        {
-            
-            
-        }
-
-        private void Task4_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Matching_text_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-
-        private void Save_cranqrel_Click(object sender, EventArgs e)
-        {
-            DialogResult result = savedialogconqrel.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                string name = savedialogconqrel.FileName;
-                File.WriteAllText(name, save_conqrel.Text);
-            }
-        }
-
-        private void Savedialogconqrel_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void Save_conqrel_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void RichTextBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void RichTextBox3_TextChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Link_Click(object sender, EventArgs e)
-        {
-            //string appName = @"C:\Users\luke666\Desktop\study\lecture\data retirve\9\tut\WordNet 2.1.lnk";
-            //Process.Start(appName);
-            //MessageBox.Show(String.Format("外部程序 {0} 启动完成！", appName), this.Text,
-            //    MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            //load_word.Load_wordnet();
-
-        }
-
-		private void TabDiagnostics_Click(object sender, EventArgs e)
+		private void BtnSearchDropdown_Click(object sender, EventArgs e)
 		{
+			if(toProcess)
+			{
+				if(btnSearchDropdown.ImageIndex == 0)
+				{
+					btnSearchDropdown.ImageIndex = 1;
+					lblFinalQuery.Show();
+					txtFinalQuery.Show();
+					var location = chkbxProcessing2.Location;
+					chkbxProcessing2.Location = new Point(location.X, location.Y + 45);
+					location = btnSearch2.Location;
+					btnSearch2.Location = new Point(location.X, location.Y + 45);
+				}
+				else
+				{
+					btnSearchDropdown.ImageIndex = 0;
+					lblFinalQuery.Hide();
+					txtFinalQuery.Hide();
+					var location = chkbxProcessing2.Location;
+					chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
+					location = btnSearch2.Location;
+					btnSearch2.Location = new Point(location.X, location.Y - 45);
+				}
+			}
+		}
 
+		private void ChkbxProcessing2_CheckedChanged(object sender, EventArgs e)
+		{
+			toProcess = !chkbxProcessing2.Checked;
+			
+			if(chkbxProcessing1.Checked != chkbxProcessing2.Checked)
+			{
+				chkbxProcessing1.Checked = chkbxProcessing2.Checked;
+			}
+			if (!toProcess)
+			{
+				btnSearchDropdown.Hide();
+				if (btnSearchDropdown.ImageIndex == 1)
+				{
+					lblFinalQuery.Hide();
+					txtFinalQuery.Hide();
+					var location = chkbxProcessing2.Location;
+					chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
+					location = btnSearch2.Location;
+					btnSearch2.Location = new Point(location.X, location.Y - 45);
+				}
+			}
+			else
+			{
+				btnSearchDropdown.Show();
+				if (btnSearchDropdown.ImageIndex == 1)
+				{
+					lblFinalQuery.Show();
+					txtFinalQuery.Show();
+					var location = chkbxProcessing2.Location;
+					chkbxProcessing2.Location = new Point(location.X, location.Y + 45);
+					location = btnSearch2.Location;
+					btnSearch2.Location = new Point(location.X, location.Y + 45);
+				}
+			}
+		}
+
+		private void ChkbxProcessing1_CheckedChanged(object sender, EventArgs e)
+		{
+			toProcess = !chkbxProcessing1.Checked;
+
+			if (chkbxProcessing2.Checked != chkbxProcessing1.Checked)
+			{
+				chkbxProcessing2.Checked = chkbxProcessing1.Checked;
+			}
+			if (!toProcess)
+			{
+				btnSearchDropdown.Hide();
+				lblFinalQuery.Hide();
+				txtFinalQuery.Hide();
+			}
+			else
+			{
+				btnSearchDropdown.Show();
+			}
+		}
+
+		private void DataResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var index = grid.Rows.IndexOf(grid.CurrentRow);
+
+			var result = relevantDocuments[index];
+			var sArray = result.Split(new char[] { '‰' });
+			string rank = sArray[0];
+			string score = sArray[1];
+			string docNum = sArray[2];
+			string previewText = sArray[3];
+			string title = sArray[4];
+			string url = sArray[5];
+			string passage = sArray[6];
+			MessageBox.Show( passage + "\n\n" + url, "Full Passage", MessageBoxButtons.OK, MessageBoxIcon.None);
+		}
+
+		private void BtnSave_Click(object sender, EventArgs e)
+		{
+			saveFileDialog1.FileName = "Results";
+			saveFileDialog1.Filter = "Text files (*.txt)|*.txt";
+			saveFileDialog1.DefaultExt = "txt";
+			saveFileDialog1.Title = "Result file save location";
+			saveFileDialog1.OverwritePrompt = true;
+			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				string sFile = saveFileDialog1.FileName;
+				var resultsString = txtAllResults.Text;
+				if(saveFileDialog1.OpenFile() != null)
+				{
+					var lastLine = File.ReadLines(sFile).Last();
+					var split = resultsString.Split(new string[] { lastLine }, StringSplitOptions.None);
+					if (split.Length > 1)
+					{
+						resultsString = split.Last();
+					}
+
+					var lines = resultsString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+					File.AppendAllLines(sFile, lines);
+				}
+				else
+				{
+					var lines = resultsString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+					using(StreamWriter sw = new StreamWriter(sFile))
+					{
+						foreach (string line in lines)
+						{
+							sw.WriteLine(line);
+						}
+					}
+				}
+			}
 		}
 	}
 }

@@ -29,7 +29,12 @@
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
+			System.Windows.Forms.Label lblSearch1;
+			System.Windows.Forms.Label lblSearch2;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.Label lblQueryResults;
+			System.Windows.Forms.Label lblAllResults;
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.txtCollectionFile = new System.Windows.Forms.TextBox();
 			this.btnBrowse = new System.Windows.Forms.Button();
@@ -40,7 +45,6 @@
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.btnCreateIndex = new System.Windows.Forms.Button();
 			this.txtSearchContent1 = new System.Windows.Forms.TextBox();
-			this.lblSearch1 = new System.Windows.Forms.Label();
 			this.btnSearch1 = new System.Windows.Forms.Button();
 			this.lblQueryGenTimeResult = new System.Windows.Forms.Label();
 			this.lblIndexTime = new System.Windows.Forms.Label();
@@ -49,26 +53,11 @@
 			this.lblFinalQuery = new System.Windows.Forms.Label();
 			this.lblNumRelDocs = new System.Windows.Forms.Label();
 			this.lblNumRelDocsResult = new System.Windows.Forms.Label();
-			this.txtAnswer = new System.Windows.Forms.RichTextBox();
 			this.txtFinalQuery = new System.Windows.Forms.TextBox();
-			this.button4 = new System.Windows.Forms.Button();
-			this.btnSave = new System.Windows.Forms.Button();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-			this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-			this.richTextBox2 = new System.Windows.Forms.RichTextBox();
 			this.lblSearchingTimes = new System.Windows.Forms.Label();
 			this.lblIndexTimeResult = new System.Windows.Forms.Label();
-			this.task4 = new System.Windows.Forms.RichTextBox();
-			this.lblQueryBaseline = new System.Windows.Forms.Label();
-			this.lblQueryBaselineAll = new System.Windows.Forms.Label();
-			this.lblAnswer = new System.Windows.Forms.Label();
-			this.lblRelevantDocuments = new System.Windows.Forms.Label();
-			this.btnSaveCranqrel = new System.Windows.Forms.Button();
 			this.savedialogconqrel = new System.Windows.Forms.SaveFileDialog();
-			this.lblCranqrel = new System.Windows.Forms.Label();
-			this.save_conqrel = new System.Windows.Forms.RichTextBox();
-			this.richTextBox3 = new System.Windows.Forms.RichTextBox();
-			this.Link = new System.Windows.Forms.Button();
 			this.pnlIndex = new System.Windows.Forms.Panel();
 			this.pnlSearchHome = new System.Windows.Forms.Panel();
 			this.chkbxProcessing1 = new System.Windows.Forms.CheckBox();
@@ -76,24 +65,55 @@
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabSearch = new System.Windows.Forms.TabPage();
 			this.pnlSearchResults = new System.Windows.Forms.Panel();
-			this.lblSearch2 = new System.Windows.Forms.Label();
-			this.txtSearchContent2 = new System.Windows.Forms.TextBox();
-			this.btnSearch2 = new System.Windows.Forms.Button();
-			this.chlbxProcessing2 = new System.Windows.Forms.CheckBox();
-			this.tabDiagnostics = new System.Windows.Forms.TabPage();
+			this.btnSearchDropdown = new System.Windows.Forms.Button();
+			this.imglstDropdown = new System.Windows.Forms.ImageList(this.components);
 			this.dataResults = new System.Windows.Forms.DataGridView();
 			this.Rank = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Result = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+			this.txtSearchContent2 = new System.Windows.Forms.TextBox();
+			this.btnSearch2 = new System.Windows.Forms.Button();
+			this.chkbxProcessing2 = new System.Windows.Forms.CheckBox();
+			this.tabDiagnostics = new System.Windows.Forms.TabPage();
+			this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.txtQueryResults = new System.Windows.Forms.TextBox();
+			this.txtAllResults = new System.Windows.Forms.TextBox();
+			this.btnSave = new System.Windows.Forms.Button();
+			lblSearch1 = new System.Windows.Forms.Label();
+			lblSearch2 = new System.Windows.Forms.Label();
+			lblQueryResults = new System.Windows.Forms.Label();
+			lblAllResults = new System.Windows.Forms.Label();
 			this.pnlIndex.SuspendLayout();
 			this.pnlSearchHome.SuspendLayout();
 			this.pnlSearch.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabSearch.SuspendLayout();
 			this.pnlSearchResults.SuspendLayout();
-			this.tabDiagnostics.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataResults)).BeginInit();
+			this.tabDiagnostics.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
 			this.SuspendLayout();
+			// 
+			// lblSearch1
+			// 
+			lblSearch1.Anchor = System.Windows.Forms.AnchorStyles.None;
+			lblSearch1.AutoSize = true;
+			lblSearch1.Location = new System.Drawing.Point(523, 203);
+			lblSearch1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			lblSearch1.Name = "lblSearch1";
+			lblSearch1.Size = new System.Drawing.Size(108, 13);
+			lblSearch1.TabIndex = 4;
+			lblSearch1.Text = "Input Search Content";
+			// 
+			// lblSearch2
+			// 
+			lblSearch2.AutoSize = true;
+			lblSearch2.Location = new System.Drawing.Point(9, 17);
+			lblSearch2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			lblSearch2.Name = "lblSearch2";
+			lblSearch2.Size = new System.Drawing.Size(108, 13);
+			lblSearch2.TabIndex = 32;
+			lblSearch2.Text = "Input Search Content";
 			// 
 			// txtCollectionFile
 			// 
@@ -184,17 +204,6 @@
 			this.txtSearchContent1.TabIndex = 3;
 			this.txtSearchContent1.TextChanged += new System.EventHandler(this.TxtSearchContent1_TextChanged);
 			// 
-			// lblSearch1
-			// 
-			this.lblSearch1.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.lblSearch1.AutoSize = true;
-			this.lblSearch1.Location = new System.Drawing.Point(523, 203);
-			this.lblSearch1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-			this.lblSearch1.Name = "lblSearch1";
-			this.lblSearch1.Size = new System.Drawing.Size(108, 13);
-			this.lblSearch1.TabIndex = 4;
-			this.lblSearch1.Text = "Input Search Content";
-			// 
 			// btnSearch1
 			// 
 			this.btnSearch1.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -212,18 +221,17 @@
 			// lblQueryGenTimeResult
 			// 
 			this.lblQueryGenTimeResult.AutoSize = true;
-			this.lblQueryGenTimeResult.Location = new System.Drawing.Point(171, 43);
+			this.lblQueryGenTimeResult.Location = new System.Drawing.Point(158, 42);
 			this.lblQueryGenTimeResult.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblQueryGenTimeResult.Name = "lblQueryGenTimeResult";
 			this.lblQueryGenTimeResult.Size = new System.Drawing.Size(13, 13);
 			this.lblQueryGenTimeResult.TabIndex = 6;
 			this.lblQueryGenTimeResult.Text = "0";
-			this.lblQueryGenTimeResult.Click += new System.EventHandler(this.Time_Click);
 			// 
 			// lblIndexTime
 			// 
 			this.lblIndexTime.AutoSize = true;
-			this.lblIndexTime.Location = new System.Drawing.Point(33, 66);
+			this.lblIndexTime.Location = new System.Drawing.Point(294, 19);
 			this.lblIndexTime.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblIndexTime.Name = "lblIndexTime";
 			this.lblIndexTime.Size = new System.Drawing.Size(96, 13);
@@ -233,7 +241,7 @@
 			// lblQueryGenTime
 			// 
 			this.lblQueryGenTime.AutoSize = true;
-			this.lblQueryGenTime.Location = new System.Drawing.Point(33, 43);
+			this.lblQueryGenTime.Location = new System.Drawing.Point(20, 42);
 			this.lblQueryGenTime.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblQueryGenTime.Name = "lblQueryGenTime";
 			this.lblQueryGenTime.Size = new System.Drawing.Size(107, 13);
@@ -243,28 +251,28 @@
 			// lblSearchingTimesResult
 			// 
 			this.lblSearchingTimesResult.AutoSize = true;
-			this.lblSearchingTimesResult.Location = new System.Drawing.Point(171, 90);
+			this.lblSearchingTimesResult.Location = new System.Drawing.Point(432, 43);
 			this.lblSearchingTimesResult.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblSearchingTimesResult.Name = "lblSearchingTimesResult";
 			this.lblSearchingTimesResult.Size = new System.Drawing.Size(13, 13);
 			this.lblSearchingTimesResult.TabIndex = 11;
 			this.lblSearchingTimesResult.Text = "0";
-			this.lblSearchingTimesResult.Click += new System.EventHandler(this.Searching_time_Click);
 			// 
 			// lblFinalQuery
 			// 
 			this.lblFinalQuery.AutoSize = true;
-			this.lblFinalQuery.Location = new System.Drawing.Point(8, 96);
+			this.lblFinalQuery.Location = new System.Drawing.Point(9, 59);
 			this.lblFinalQuery.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblFinalQuery.Name = "lblFinalQuery";
-			this.lblFinalQuery.Size = new System.Drawing.Size(77, 13);
+			this.lblFinalQuery.Size = new System.Drawing.Size(88, 13);
 			this.lblFinalQuery.TabIndex = 12;
-			this.lblFinalQuery.Text = "The final query";
+			this.lblFinalQuery.Text = "Processed Query";
+			this.lblFinalQuery.Visible = false;
 			// 
 			// lblNumRelDocs
 			// 
 			this.lblNumRelDocs.AutoSize = true;
-			this.lblNumRelDocs.Location = new System.Drawing.Point(33, 20);
+			this.lblNumRelDocs.Location = new System.Drawing.Point(20, 19);
 			this.lblNumRelDocs.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblNumRelDocs.Name = "lblNumRelDocs";
 			this.lblNumRelDocs.Size = new System.Drawing.Size(133, 13);
@@ -274,78 +282,28 @@
 			// lblNumRelDocsResult
 			// 
 			this.lblNumRelDocsResult.AutoSize = true;
-			this.lblNumRelDocsResult.Location = new System.Drawing.Point(171, 20);
+			this.lblNumRelDocsResult.Location = new System.Drawing.Point(158, 19);
 			this.lblNumRelDocsResult.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblNumRelDocsResult.Name = "lblNumRelDocsResult";
 			this.lblNumRelDocsResult.Size = new System.Drawing.Size(13, 13);
 			this.lblNumRelDocsResult.TabIndex = 15;
 			this.lblNumRelDocsResult.Text = "0";
-			this.lblNumRelDocsResult.Click += new System.EventHandler(this.Number_result_Click);
-			// 
-			// txtAnswer
-			// 
-			this.txtAnswer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-			this.txtAnswer.Location = new System.Drawing.Point(7, 171);
-			this.txtAnswer.Margin = new System.Windows.Forms.Padding(2);
-			this.txtAnswer.Name = "txtAnswer";
-			this.txtAnswer.ReadOnly = true;
-			this.txtAnswer.Size = new System.Drawing.Size(379, 374);
-			this.txtAnswer.TabIndex = 18;
-			this.txtAnswer.Text = "";
-			this.txtAnswer.TextChanged += new System.EventHandler(this.RichTextBox1_TextChanged);
 			// 
 			// txtFinalQuery
 			// 
-			this.txtFinalQuery.Location = new System.Drawing.Point(8, 115);
+			this.txtFinalQuery.Location = new System.Drawing.Point(11, 75);
 			this.txtFinalQuery.Margin = new System.Windows.Forms.Padding(2);
 			this.txtFinalQuery.Multiline = true;
 			this.txtFinalQuery.Name = "txtFinalQuery";
 			this.txtFinalQuery.ReadOnly = true;
-			this.txtFinalQuery.Size = new System.Drawing.Size(379, 22);
+			this.txtFinalQuery.Size = new System.Drawing.Size(379, 20);
 			this.txtFinalQuery.TabIndex = 20;
-			this.txtFinalQuery.TextChanged += new System.EventHandler(this.TxtSearch_TextChanged);
-			// 
-			// button4
-			// 
-			this.button4.Location = new System.Drawing.Point(197, 252);
-			this.button4.Margin = new System.Windows.Forms.Padding(2);
-			this.button4.Name = "button4";
-			this.button4.Size = new System.Drawing.Size(88, 43);
-			this.button4.TabIndex = 21;
-			this.button4.Text = "Clear";
-			this.button4.UseVisualStyleBackColor = true;
-			// 
-			// btnSave
-			// 
-			this.btnSave.Location = new System.Drawing.Point(739, 449);
-			this.btnSave.Margin = new System.Windows.Forms.Padding(2);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(55, 25);
-			this.btnSave.TabIndex = 22;
-			this.btnSave.Text = "Save";
-			this.btnSave.UseVisualStyleBackColor = true;
-			this.btnSave.Click += new System.EventHandler(this.Save_button_Click);
-			// 
-			// saveFileDialog1
-			// 
-			this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveFileDialog1_FileOk);
-			// 
-			// richTextBox2
-			// 
-			this.richTextBox2.Location = new System.Drawing.Point(707, 264);
-			this.richTextBox2.Margin = new System.Windows.Forms.Padding(2);
-			this.richTextBox2.Name = "richTextBox2";
-			this.richTextBox2.ShortcutsEnabled = false;
-			this.richTextBox2.Size = new System.Drawing.Size(422, 179);
-			this.richTextBox2.TabIndex = 23;
-			this.richTextBox2.Text = "";
-			this.richTextBox2.TextChanged += new System.EventHandler(this.RichTextBox2_TextChanged);
+			this.txtFinalQuery.Visible = false;
 			// 
 			// lblSearchingTimes
 			// 
 			this.lblSearchingTimes.AutoSize = true;
-			this.lblSearchingTimes.Location = new System.Drawing.Point(34, 90);
+			this.lblSearchingTimes.Location = new System.Drawing.Point(294, 43);
 			this.lblSearchingTimes.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblSearchingTimes.Name = "lblSearchingTimes";
 			this.lblSearchingTimes.Size = new System.Drawing.Size(80, 13);
@@ -355,116 +313,12 @@
 			// lblIndexTimeResult
 			// 
 			this.lblIndexTimeResult.AutoSize = true;
-			this.lblIndexTimeResult.Location = new System.Drawing.Point(171, 66);
+			this.lblIndexTimeResult.Location = new System.Drawing.Point(432, 19);
 			this.lblIndexTimeResult.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.lblIndexTimeResult.Name = "lblIndexTimeResult";
 			this.lblIndexTimeResult.Size = new System.Drawing.Size(13, 13);
 			this.lblIndexTimeResult.TabIndex = 25;
 			this.lblIndexTimeResult.Text = "0";
-			this.lblIndexTimeResult.Click += new System.EventHandler(this.Coun_time_Click);
-			// 
-			// task4
-			// 
-			this.task4.Location = new System.Drawing.Point(707, 89);
-			this.task4.Margin = new System.Windows.Forms.Padding(2);
-			this.task4.Name = "task4";
-			this.task4.Size = new System.Drawing.Size(419, 121);
-			this.task4.TabIndex = 26;
-			this.task4.Text = "";
-			this.task4.TextChanged += new System.EventHandler(this.Task4_TextChanged);
-			// 
-			// lblQueryBaseline
-			// 
-			this.lblQueryBaseline.AutoSize = true;
-			this.lblQueryBaseline.Location = new System.Drawing.Point(704, 74);
-			this.lblQueryBaseline.Name = "lblQueryBaseline";
-			this.lblQueryBaseline.Size = new System.Drawing.Size(118, 13);
-			this.lblQueryBaseline.TabIndex = 27;
-			this.lblQueryBaseline.Text = "baseline_for_this_query";
-			// 
-			// lblQueryBaselineAll
-			// 
-			this.lblQueryBaselineAll.AutoSize = true;
-			this.lblQueryBaselineAll.Location = new System.Drawing.Point(704, 249);
-			this.lblQueryBaselineAll.Name = "lblQueryBaselineAll";
-			this.lblQueryBaselineAll.Size = new System.Drawing.Size(112, 13);
-			this.lblQueryBaselineAll.TabIndex = 28;
-			this.lblQueryBaselineAll.Text = "baseline_for_all_query";
-			// 
-			// lblAnswer
-			// 
-			this.lblAnswer.AutoSize = true;
-			this.lblAnswer.Location = new System.Drawing.Point(5, 151);
-			this.lblAnswer.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-			this.lblAnswer.Name = "lblAnswer";
-			this.lblAnswer.Size = new System.Drawing.Size(97, 13);
-			this.lblAnswer.TabIndex = 29;
-			this.lblAnswer.Text = "Answer_For_Query";
-			// 
-			// lblRelevantDocuments
-			// 
-			this.lblRelevantDocuments.AutoSize = true;
-			this.lblRelevantDocuments.Location = new System.Drawing.Point(411, 10);
-			this.lblRelevantDocuments.Name = "lblRelevantDocuments";
-			this.lblRelevantDocuments.Size = new System.Drawing.Size(94, 13);
-			this.lblRelevantDocuments.TabIndex = 31;
-			this.lblRelevantDocuments.Text = "All_matching_Text";
-			// 
-			// btnSaveCranqrel
-			// 
-			this.btnSaveCranqrel.Location = new System.Drawing.Point(53, 494);
-			this.btnSaveCranqrel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-			this.btnSaveCranqrel.Name = "btnSaveCranqrel";
-			this.btnSaveCranqrel.Size = new System.Drawing.Size(85, 25);
-			this.btnSaveCranqrel.TabIndex = 34;
-			this.btnSaveCranqrel.Text = "Save_cranqrel";
-			this.btnSaveCranqrel.UseVisualStyleBackColor = true;
-			this.btnSaveCranqrel.Click += new System.EventHandler(this.Save_cranqrel_Click);
-			// 
-			// savedialogconqrel
-			// 
-			this.savedialogconqrel.FileOk += new System.ComponentModel.CancelEventHandler(this.Savedialogconqrel_FileOk);
-			// 
-			// lblCranqrel
-			// 
-			this.lblCranqrel.AutoSize = true;
-			this.lblCranqrel.Location = new System.Drawing.Point(50, 335);
-			this.lblCranqrel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-			this.lblCranqrel.Name = "lblCranqrel";
-			this.lblCranqrel.Size = new System.Drawing.Size(45, 13);
-			this.lblCranqrel.TabIndex = 35;
-			this.lblCranqrel.Text = "cranqrel";
-			// 
-			// save_conqrel
-			// 
-			this.save_conqrel.Location = new System.Drawing.Point(53, 351);
-			this.save_conqrel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-			this.save_conqrel.Name = "save_conqrel";
-			this.save_conqrel.Size = new System.Drawing.Size(419, 137);
-			this.save_conqrel.TabIndex = 36;
-			this.save_conqrel.Text = "";
-			this.save_conqrel.TextChanged += new System.EventHandler(this.Save_conqrel_TextChanged);
-			// 
-			// richTextBox3
-			// 
-			this.richTextBox3.Location = new System.Drawing.Point(240, 145);
-			this.richTextBox3.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-			this.richTextBox3.Name = "richTextBox3";
-			this.richTextBox3.Size = new System.Drawing.Size(422, 75);
-			this.richTextBox3.TabIndex = 37;
-			this.richTextBox3.Text = "";
-			this.richTextBox3.TextChanged += new System.EventHandler(this.RichTextBox3_TextChanged_1);
-			// 
-			// Link
-			// 
-			this.Link.Location = new System.Drawing.Point(549, 285);
-			this.Link.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-			this.Link.Name = "Link";
-			this.Link.Size = new System.Drawing.Size(95, 66);
-			this.Link.TabIndex = 38;
-			this.Link.Text = "button2";
-			this.Link.UseVisualStyleBackColor = true;
-			this.Link.Click += new System.EventHandler(this.Link_Click);
 			// 
 			// pnlIndex
 			// 
@@ -484,7 +338,7 @@
 			// pnlSearchHome
 			// 
 			this.pnlSearchHome.Controls.Add(this.chkbxProcessing1);
-			this.pnlSearchHome.Controls.Add(this.lblSearch1);
+			this.pnlSearchHome.Controls.Add(lblSearch1);
 			this.pnlSearchHome.Controls.Add(this.txtSearchContent1);
 			this.pnlSearchHome.Controls.Add(this.btnSearch1);
 			this.pnlSearchHome.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -503,7 +357,7 @@
 			this.chkbxProcessing1.TabIndex = 6;
 			this.chkbxProcessing1.Text = "Do not process query";
 			this.chkbxProcessing1.UseVisualStyleBackColor = true;
-			this.chkbxProcessing1.Visible = false;
+			this.chkbxProcessing1.CheckedChanged += new System.EventHandler(this.ChkbxProcessing1_CheckedChanged);
 			// 
 			// pnlSearch
 			// 
@@ -528,8 +382,8 @@
 			// 
 			// tabSearch
 			// 
-			this.tabSearch.Controls.Add(this.pnlSearchHome);
 			this.tabSearch.Controls.Add(this.pnlSearchResults);
+			this.tabSearch.Controls.Add(this.pnlSearchHome);
 			this.tabSearch.Location = new System.Drawing.Point(4, 22);
 			this.tabSearch.Name = "tabSearch";
 			this.tabSearch.Padding = new System.Windows.Forms.Padding(3);
@@ -540,16 +394,14 @@
 			// 
 			// pnlSearchResults
 			// 
+			this.pnlSearchResults.Controls.Add(this.btnSearchDropdown);
 			this.pnlSearchResults.Controls.Add(this.dataResults);
-			this.pnlSearchResults.Controls.Add(this.lblRelevantDocuments);
-			this.pnlSearchResults.Controls.Add(this.txtAnswer);
-			this.pnlSearchResults.Controls.Add(this.lblAnswer);
 			this.pnlSearchResults.Controls.Add(this.txtFinalQuery);
 			this.pnlSearchResults.Controls.Add(this.lblFinalQuery);
-			this.pnlSearchResults.Controls.Add(this.lblSearch2);
+			this.pnlSearchResults.Controls.Add(lblSearch2);
 			this.pnlSearchResults.Controls.Add(this.txtSearchContent2);
 			this.pnlSearchResults.Controls.Add(this.btnSearch2);
-			this.pnlSearchResults.Controls.Add(this.chlbxProcessing2);
+			this.pnlSearchResults.Controls.Add(this.chkbxProcessing2);
 			this.pnlSearchResults.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.pnlSearchResults.Location = new System.Drawing.Point(3, 3);
 			this.pnlSearchResults.Name = "pnlSearchResults";
@@ -557,15 +409,69 @@
 			this.pnlSearchResults.TabIndex = 36;
 			this.pnlSearchResults.Visible = false;
 			// 
-			// lblSearch2
+			// btnSearchDropdown
 			// 
-			this.lblSearch2.AutoSize = true;
-			this.lblSearch2.Location = new System.Drawing.Point(8, 10);
-			this.lblSearch2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-			this.lblSearch2.Name = "lblSearch2";
-			this.lblSearch2.Size = new System.Drawing.Size(108, 13);
-			this.lblSearch2.TabIndex = 32;
-			this.lblSearch2.Text = "Input Search Content";
+			this.btnSearchDropdown.ImageIndex = 0;
+			this.btnSearchDropdown.ImageList = this.imglstDropdown;
+			this.btnSearchDropdown.Location = new System.Drawing.Point(396, 32);
+			this.btnSearchDropdown.Name = "btnSearchDropdown";
+			this.btnSearchDropdown.Size = new System.Drawing.Size(22, 22);
+			this.btnSearchDropdown.TabIndex = 37;
+			this.toolTip.SetToolTip(this.btnSearchDropdown, "Show/Hide processed query");
+			this.btnSearchDropdown.UseVisualStyleBackColor = true;
+			this.btnSearchDropdown.Click += new System.EventHandler(this.BtnSearchDropdown_Click);
+			// 
+			// imglstDropdown
+			// 
+			this.imglstDropdown.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imglstDropdown.ImageStream")));
+			this.imglstDropdown.TransparentColor = System.Drawing.Color.Transparent;
+			this.imglstDropdown.Images.SetKeyName(0, "expand-arrow-32.png");
+			this.imglstDropdown.Images.SetKeyName(1, "collapse-arrow-32.png");
+			// 
+			// dataResults
+			// 
+			this.dataResults.AllowUserToAddRows = false;
+			this.dataResults.AllowUserToDeleteRows = false;
+			this.dataResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.dataResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+			this.dataResults.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.dataResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataResults.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Rank,
+            this.Result});
+			this.dataResults.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+			this.dataResults.Location = new System.Drawing.Point(11, 133);
+			this.dataResults.MultiSelect = false;
+			this.dataResults.Name = "dataResults";
+			this.dataResults.ReadOnly = true;
+			this.dataResults.RowHeadersVisible = false;
+			this.dataResults.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+			this.dataResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.dataResults.Size = new System.Drawing.Size(1133, 412);
+			this.dataResults.TabIndex = 36;
+			this.dataResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataResults_CellDoubleClick);
+			// 
+			// Rank
+			// 
+			this.Rank.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.Rank.FillWeight = 15.22843F;
+			this.Rank.HeaderText = "Rank";
+			this.Rank.Name = "Rank";
+			this.Rank.ReadOnly = true;
+			this.Rank.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.Rank.Width = 39;
+			// 
+			// Result
+			// 
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.Result.DefaultCellStyle = dataGridViewCellStyle3;
+			this.Result.FillWeight = 184.7716F;
+			this.Result.HeaderText = "Result";
+			this.Result.Name = "Result";
+			this.Result.ReadOnly = true;
+			this.Result.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// txtSearchContent2
 			// 
@@ -578,7 +484,7 @@
 			// btnSearch2
 			// 
 			this.btnSearch2.Enabled = false;
-			this.btnSearch2.Location = new System.Drawing.Point(315, 59);
+			this.btnSearch2.Location = new System.Drawing.Point(316, 104);
 			this.btnSearch2.Name = "btnSearch2";
 			this.btnSearch2.Size = new System.Drawing.Size(75, 23);
 			this.btnSearch2.TabIndex = 34;
@@ -586,35 +492,29 @@
 			this.btnSearch2.UseVisualStyleBackColor = true;
 			this.btnSearch2.Click += new System.EventHandler(this.BtnSearch_Click);
 			// 
-			// chlbxProcessing2
+			// chkbxProcessing2
 			// 
-			this.chlbxProcessing2.AutoSize = true;
-			this.chlbxProcessing2.Location = new System.Drawing.Point(11, 63);
-			this.chlbxProcessing2.Name = "chlbxProcessing2";
-			this.chlbxProcessing2.Size = new System.Drawing.Size(98, 17);
-			this.chlbxProcessing2.TabIndex = 35;
-			this.chlbxProcessing2.Text = "Do not process";
-			this.chlbxProcessing2.UseVisualStyleBackColor = true;
-			this.chlbxProcessing2.Visible = false;
+			this.chkbxProcessing2.AutoSize = true;
+			this.chkbxProcessing2.Location = new System.Drawing.Point(12, 101);
+			this.chkbxProcessing2.Name = "chkbxProcessing2";
+			this.chkbxProcessing2.Size = new System.Drawing.Size(98, 17);
+			this.chkbxProcessing2.TabIndex = 35;
+			this.chkbxProcessing2.Text = "Do not process";
+			this.chkbxProcessing2.UseVisualStyleBackColor = true;
+			this.chkbxProcessing2.CheckedChanged += new System.EventHandler(this.ChkbxProcessing2_CheckedChanged);
 			// 
 			// tabDiagnostics
 			// 
-			this.tabDiagnostics.Controls.Add(this.Link);
-			this.tabDiagnostics.Controls.Add(this.richTextBox3);
-			this.tabDiagnostics.Controls.Add(this.save_conqrel);
-			this.tabDiagnostics.Controls.Add(this.lblCranqrel);
+			this.tabDiagnostics.Controls.Add(this.btnSave);
+			this.tabDiagnostics.Controls.Add(lblAllResults);
+			this.tabDiagnostics.Controls.Add(lblQueryResults);
+			this.tabDiagnostics.Controls.Add(this.txtAllResults);
+			this.tabDiagnostics.Controls.Add(this.txtQueryResults);
 			this.tabDiagnostics.Controls.Add(this.lblQueryGenTimeResult);
-			this.tabDiagnostics.Controls.Add(this.btnSaveCranqrel);
-			this.tabDiagnostics.Controls.Add(this.lblQueryBaselineAll);
-			this.tabDiagnostics.Controls.Add(this.lblQueryBaseline);
 			this.tabDiagnostics.Controls.Add(this.lblIndexTime);
-			this.tabDiagnostics.Controls.Add(this.task4);
 			this.tabDiagnostics.Controls.Add(this.lblQueryGenTime);
-			this.tabDiagnostics.Controls.Add(this.richTextBox2);
 			this.tabDiagnostics.Controls.Add(this.lblIndexTimeResult);
 			this.tabDiagnostics.Controls.Add(this.lblSearchingTimes);
-			this.tabDiagnostics.Controls.Add(this.btnSave);
-			this.tabDiagnostics.Controls.Add(this.button4);
 			this.tabDiagnostics.Controls.Add(this.lblNumRelDocsResult);
 			this.tabDiagnostics.Controls.Add(this.lblNumRelDocs);
 			this.tabDiagnostics.Controls.Add(this.lblSearchingTimesResult);
@@ -625,42 +525,59 @@
 			this.tabDiagnostics.TabIndex = 1;
 			this.tabDiagnostics.Text = "Diagnostics";
 			this.tabDiagnostics.UseVisualStyleBackColor = true;
-			this.tabDiagnostics.Click += new System.EventHandler(this.TabDiagnostics_Click);
 			// 
-			// dataResults
+			// txtQueryResults
 			// 
-			this.dataResults.AllowUserToAddRows = false;
-			this.dataResults.AllowUserToDeleteRows = false;
-			this.dataResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-			this.dataResults.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.dataResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataResults.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Rank,
-            this.Result});
-			this.dataResults.Location = new System.Drawing.Point(414, 33);
-			this.dataResults.MultiSelect = false;
-			this.dataResults.Name = "dataResults";
-			this.dataResults.ReadOnly = true;
-			this.dataResults.RowHeadersVisible = false;
-			this.dataResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataResults.Size = new System.Drawing.Size(730, 512);
-			this.dataResults.TabIndex = 36;
+			this.txtQueryResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtQueryResults.Location = new System.Drawing.Point(20, 119);
+			this.txtQueryResults.Multiline = true;
+			this.txtQueryResults.Name = "txtQueryResults";
+			this.txtQueryResults.Size = new System.Drawing.Size(549, 389);
+			this.txtQueryResults.TabIndex = 26;
 			// 
-			// Rank
+			// txtAllResults
 			// 
-			this.Rank.FillWeight = 15.22843F;
-			this.Rank.HeaderText = "Rank";
-			this.Rank.Name = "Rank";
-			this.Rank.ReadOnly = true;
+			this.txtAllResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAllResults.Location = new System.Drawing.Point(587, 119);
+			this.txtAllResults.Multiline = true;
+			this.txtAllResults.Name = "txtAllResults";
+			this.txtAllResults.Size = new System.Drawing.Size(549, 389);
+			this.txtAllResults.TabIndex = 26;
 			// 
-			// Result
+			// lblQueryResults
 			// 
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.Result.DefaultCellStyle = dataGridViewCellStyle3;
-			this.Result.FillWeight = 184.7716F;
-			this.Result.HeaderText = "Result";
-			this.Result.Name = "Result";
-			this.Result.ReadOnly = true;
+			lblQueryResults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			lblQueryResults.Location = new System.Drawing.Point(20, 100);
+			lblQueryResults.Name = "lblQueryResults";
+			lblQueryResults.Size = new System.Drawing.Size(549, 13);
+			lblQueryResults.TabIndex = 27;
+			lblQueryResults.Text = "Results for current query";
+			// 
+			// lblAllResults
+			// 
+			lblAllResults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			lblAllResults.Location = new System.Drawing.Point(587, 97);
+			lblAllResults.Name = "lblAllResults";
+			lblAllResults.Size = new System.Drawing.Size(549, 13);
+			lblAllResults.TabIndex = 27;
+			lblAllResults.Text = "Results for current session";
+			// 
+			// btnSave
+			// 
+			this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnSave.Location = new System.Drawing.Point(1061, 520);
+			this.btnSave.Name = "btnSave";
+			this.btnSave.Size = new System.Drawing.Size(75, 23);
+			this.btnSave.TabIndex = 28;
+			this.btnSave.Text = "Save";
+			this.btnSave.UseVisualStyleBackColor = true;
+			this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
 			// 
 			// Form1
 			// 
@@ -673,8 +590,7 @@
 			this.MinimumSize = new System.Drawing.Size(800, 600);
 			this.Name = "Form1";
 			this.Text = "xxx";
-			this.Load += new System.EventHandler(this.Form1_Load_1);
-			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+			this.Load += new System.EventHandler(this.Form1_Load);
 			this.pnlIndex.ResumeLayout(false);
 			this.pnlIndex.PerformLayout();
 			this.pnlSearchHome.ResumeLayout(false);
@@ -684,9 +600,10 @@
 			this.tabSearch.ResumeLayout(false);
 			this.pnlSearchResults.ResumeLayout(false);
 			this.pnlSearchResults.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dataResults)).EndInit();
 			this.tabDiagnostics.ResumeLayout(false);
 			this.tabDiagnostics.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.dataResults)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -703,7 +620,6 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.Button btnCreateIndex;
         private System.Windows.Forms.TextBox txtSearchContent1;
-        private System.Windows.Forms.Label lblSearch1;
         private System.Windows.Forms.Button btnSearch1;
         private System.Windows.Forms.Label lblQueryGenTimeResult;
         private System.Windows.Forms.Label lblIndexTime;
@@ -712,41 +628,32 @@
         private System.Windows.Forms.Label lblFinalQuery;
         private System.Windows.Forms.Label lblNumRelDocs;
         private System.Windows.Forms.Label lblNumRelDocsResult;
-        private System.Windows.Forms.RichTextBox txtAnswer;
         private System.Windows.Forms.TextBox txtFinalQuery;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.BindingSource bindingSource1;
-        private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.Label lblSearchingTimes;
         private System.Windows.Forms.Label lblIndexTimeResult;
-        private System.Windows.Forms.RichTextBox task4;
-        private System.Windows.Forms.Label lblQueryBaseline;
-        private System.Windows.Forms.Label lblQueryBaselineAll;
-        private System.Windows.Forms.Label lblAnswer;
-        private System.Windows.Forms.Label lblRelevantDocuments;
-        private System.Windows.Forms.Button btnSaveCranqrel;
         private System.Windows.Forms.SaveFileDialog savedialogconqrel;
-        private System.Windows.Forms.Label lblCranqrel;
-        private System.Windows.Forms.RichTextBox save_conqrel;
-        private System.Windows.Forms.RichTextBox richTextBox3;
-        private System.Windows.Forms.Button Link;
 		private System.Windows.Forms.Panel pnlIndex;
 		private System.Windows.Forms.Panel pnlSearchHome;
 		private System.Windows.Forms.Panel pnlSearch;
-		private System.Windows.Forms.Label lblSearch2;
 		private System.Windows.Forms.CheckBox chkbxProcessing1;
 		private System.Windows.Forms.TextBox txtSearchContent2;
 		private System.Windows.Forms.Button btnSearch2;
-		private System.Windows.Forms.CheckBox chlbxProcessing2;
+		private System.Windows.Forms.CheckBox chkbxProcessing2;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabSearch;
 		private System.Windows.Forms.TabPage tabDiagnostics;
 		private System.Windows.Forms.Panel pnlSearchResults;
 		private System.Windows.Forms.DataGridView dataResults;
+		private System.Windows.Forms.Button btnSearchDropdown;
+		private System.Windows.Forms.ImageList imglstDropdown;
+		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Rank;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Result;
+		private System.Windows.Forms.Button btnSave;
+		private System.Windows.Forms.TextBox txtAllResults;
+		private System.Windows.Forms.TextBox txtQueryResults;
 	}
 }
 

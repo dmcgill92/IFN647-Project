@@ -29,9 +29,5 @@ namespace IFN647_Project
             string time = stopwatch.Elapsed.TotalMilliseconds.ToString();
             return items;
         }
-
-
-
-
     }
 }
