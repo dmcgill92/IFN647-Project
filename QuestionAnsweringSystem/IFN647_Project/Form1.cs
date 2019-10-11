@@ -25,14 +25,14 @@ namespace IFN647_Project
 		bool toProcess = true;
 		List<string> relevantDocuments;
 		string groupName = "BaselineSystem";
+		string queryText = "";
 
         public Form1()
         {
             InitializeComponent();
         }
         private void Form1_Load(object sender, EventArgs e)
-        {
-
+		{ 
 		}
 
         private void BtnBrowse_Click(object sender, EventArgs e) // Opens file browser, user selects the .json collection
@@ -132,84 +132,128 @@ namespace IFN647_Project
 				pnlSearchHome.Hide();
 				pnlSearchResults.Show();
 			}
-			dataResults.Rows.Clear();
-			string queryText = txtSearchContent1.Text;
-            if (chkbxProcessing1.Checked != true)
+			tblResults.RowCount = 1;
+			tblResults.Controls.Clear();
+			tblResults.RowStyles.Clear();
+			queryText = txtSearchContent1.Text;
+
+            Stopwatch stopwatch = Stopwatch.StartNew(); 
+				
+			var retrievedData = myLuceneApp.SearchIndex(queryText, toProcess);
+
+			relevantDocuments = new List<string>(retrievedData);
+				
+            myLuceneApp.CleanUpSearch();
+			lblQueryGenTimeResult.Text = myLuceneApp.queryTime;
+			txtFinalQuery.Text = myLuceneApp.finalQuery;
+
+            //Data categorize
+            int numRetrieved = retrievedData.Count;
+            if (numRetrieved != 0)
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                
-				
-				var retrievedData = myLuceneApp.SearchIndex(queryText);
-
-				relevantDocuments = new List<string>(retrievedData);
-				
-                myLuceneApp.CleanUpSearch();
-				lblQueryGenTimeResult.Text = myLuceneApp.queryTime;
-				txtFinalQuery.Text = myLuceneApp.finalQuery;
-
-                //Data categorize
-                int numRetrieved = retrievedData.Count;
-                if (numRetrieved != 0)
+                for (int i = 0; i < numRetrieved; i++)
                 {
-                    for (int i = 0; i < numRetrieved; i++)
-                    {
-						string[] sArray = retrievedData[i].Split(new char[] { '‰' });
-						string rank = sArray[0];
-						string score = sArray[1];
-						string docNum = sArray[2];
-						string previewText = sArray[3];
-						string title = sArray[4];
-						string url = sArray[5];
-						string passage = sArray[6];
+					string[] sArray = retrievedData[i].Split(new char[] { '‰' });
+					string rank = sArray[0];
+					string score = sArray[1];
+					string docNum = sArray[2];
+					string previewText = sArray[3];
+					string title = sArray[4];
+					string url = sArray[5];
+					string passage = sArray[6];
 
-						if(i<10)
+					if(i<10)
+					{
+						var rtResult = new RichTextBox();
+						rtResult.Name = i.ToString();
+						rtResult.Clear();
+						rtResult.DeselectAll();
+						rtResult.SelectionFont = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold);
+						rtResult.AppendText(title);
+						rtResult.AppendText(Environment.NewLine);
+						rtResult.SelectionFont = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Regular);
+						rtResult.AppendText(previewText);
+						rtResult.AppendText(Environment.NewLine);
+						rtResult.AppendText(url);
+						rtResult.Anchor = (AnchorStyles.Left | AnchorStyles.Right);
+						rtResult.ScrollBars = RichTextBoxScrollBars.None;
+						rtResult.WordWrap = true;
+						rtResult.Multiline = true;
+						rtResult.ReadOnly = true;
+						rtResult.Dock = DockStyle.Top;
+						rtResult.ContentsResized += rtb_ContentsResized;
+						rtResult.DoubleClick += rtb_DoubleClick;
+
+						// Highlight text
+						string[] words = queryText.Split(' ');
+						foreach (string word in words)
 						{
-
-							dataResults.Rows.Add(rank, title + "\n" + previewText + "\n" + url);
+							int startindex = 0;
+							while (startindex < rtResult.TextLength)
+							{
+								int wordstartIndex = rtResult.Find(word, startindex, RichTextBoxFinds.None);
+								if (wordstartIndex != -1)
+								{
+									rtResult.SelectionStart = wordstartIndex;
+									rtResult.SelectionLength = word.Length;
+									rtResult.SelectionBackColor = Color.Yellow;
+								}
+								else
+									break;
+								startindex += wordstartIndex + word.Length;
+							}
 						}
 
-						txtAllResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
-						txtAllResults.AppendText(Environment.NewLine);
-						txtQueryResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
-						txtQueryResults.AppendText(Environment.NewLine);
+						tblResults.RowCount = i + 1;
+						tblResults.RowStyles.Add( new RowStyle(SizeType.AutoSize));
+						tblResults.Controls.Add(rtResult, 0, i);
 					}
-                    lblNumRelDocsResult.Text = numRetrieved.ToString();
-                    stopwatch.Stop();
-                    lblSearchingTimesResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
-                }
-            }
-            else
-            {
 
+					tblResults.AutoScroll = false;
+					tblResults.AutoScroll = true;
+					int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
+					tblResults.Padding = new Padding(0, 0, vertScrollWidth, 0);
+
+					txtAllResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
+					txtAllResults.AppendText(Environment.NewLine);
+					txtQueryResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
+					txtQueryResults.AppendText(Environment.NewLine);
+				}
+                lblNumRelDocsResult.Text = numRetrieved.ToString();
+                stopwatch.Stop();
+                lblSearchingTimesResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
             }
+
 			pnlSearchHome.Hide();
 			pnlSearch.Show();
         }
 
+		private void rtb_ContentsResized(object sender, ContentsResizedEventArgs e)
+		{
+			((RichTextBox)sender).Height = e.NewRectangle.Height + 5;
+		}
+
 		private void BtnSearchDropdown_Click(object sender, EventArgs e)
 		{
-			if(toProcess)
+			if(btnSearchDropdown.ImageIndex == 0)
 			{
-				if(btnSearchDropdown.ImageIndex == 0)
-				{
-					btnSearchDropdown.ImageIndex = 1;
-					lblFinalQuery.Show();
-					txtFinalQuery.Show();
-					var location = chkbxProcessing2.Location;
-					chkbxProcessing2.Location = new Point(location.X, location.Y + 45);
-					location = btnSearch2.Location;
-					btnSearch2.Location = new Point(location.X, location.Y + 45);
-				}
-				else
-				{
-					btnSearchDropdown.ImageIndex = 0;
-					lblFinalQuery.Hide();
-					txtFinalQuery.Hide();
-					var location = chkbxProcessing2.Location;
-					chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
-					location = btnSearch2.Location;
-					btnSearch2.Location = new Point(location.X, location.Y - 45);
-				}
+				btnSearchDropdown.ImageIndex = 1;
+				lblFinalQuery.Show();
+				txtFinalQuery.Show();
+				var location = chkbxProcessing2.Location;
+				chkbxProcessing2.Location = new Point(location.X, location.Y + 45);
+				location = btnSearch2.Location;
+				btnSearch2.Location = new Point(location.X, location.Y + 45);
+			}
+			else
+			{
+				btnSearchDropdown.ImageIndex = 0;
+				lblFinalQuery.Hide();
+				txtFinalQuery.Hide();
+				var location = chkbxProcessing2.Location;
+				chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
+				location = btnSearch2.Location;
+				btnSearch2.Location = new Point(location.X, location.Y - 45);
 			}
 		}
 
@@ -221,32 +265,6 @@ namespace IFN647_Project
 			{
 				chkbxProcessing1.Checked = chkbxProcessing2.Checked;
 			}
-			if (!toProcess)
-			{
-				btnSearchDropdown.Hide();
-				if (btnSearchDropdown.ImageIndex == 1)
-				{
-					lblFinalQuery.Hide();
-					txtFinalQuery.Hide();
-					var location = chkbxProcessing2.Location;
-					chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
-					location = btnSearch2.Location;
-					btnSearch2.Location = new Point(location.X, location.Y - 45);
-				}
-			}
-			else
-			{
-				btnSearchDropdown.Show();
-				if (btnSearchDropdown.ImageIndex == 1)
-				{
-					lblFinalQuery.Show();
-					txtFinalQuery.Show();
-					var location = chkbxProcessing2.Location;
-					chkbxProcessing2.Location = new Point(location.X, location.Y + 45);
-					location = btnSearch2.Location;
-					btnSearch2.Location = new Point(location.X, location.Y + 45);
-				}
-			}
 		}
 
 		private void ChkbxProcessing1_CheckedChanged(object sender, EventArgs e)
@@ -257,22 +275,12 @@ namespace IFN647_Project
 			{
 				chkbxProcessing2.Checked = chkbxProcessing1.Checked;
 			}
-			if (!toProcess)
-			{
-				btnSearchDropdown.Hide();
-				lblFinalQuery.Hide();
-				txtFinalQuery.Hide();
-			}
-			else
-			{
-				btnSearchDropdown.Show();
-			}
 		}
 
-		private void DataResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		private void rtb_DoubleClick(object sender, EventArgs e)
 		{
-			var grid = (DataGridView)sender;
-			var index = grid.Rows.IndexOf(grid.CurrentRow);
+			var rtBox = (RichTextBox)sender;
+			var index = Int32.Parse(rtBox.Name);
 
 			var result = relevantDocuments[index];
 			var sArray = result.Split(new char[] { '‰' });
@@ -285,6 +293,8 @@ namespace IFN647_Project
 			string passage = sArray[6];
 			MessageBox.Show( passage + "\n\n" + url, "Full Passage", MessageBoxButtons.OK, MessageBoxIcon.None);
 		}
+
+		
 
 		private void BtnSave_Click(object sender, EventArgs e)
 		{

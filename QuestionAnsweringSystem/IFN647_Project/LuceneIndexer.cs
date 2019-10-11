@@ -61,7 +61,7 @@ namespace IFN647_Project
 
         public void CreateParser() // Creates Parser
         {
-            parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
+				parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
         }
 
         public void AddToIndex(Entry entry) // Indexes an entry
@@ -104,24 +104,28 @@ namespace IFN647_Project
             searcher.Dispose();
         }
 		
-        public TopDocs SearchForQuery(string querytext, out Query query) // Searches index with query text
+        public TopDocs SearchForQuery(string querytext, out Query query, bool toProcess) // Searches index with query text
         {
 			Stopwatch stopwatch2 = Stopwatch.StartNew();
 			querytext = querytext.ToLower();
+			if(!toProcess)
+			{
+				querytext = "\"" + querytext + "\"";
+			}
             query = parser.Parse(querytext);
 			stopwatch2.Stop();
 			queryTime = stopwatch2.Elapsed.TotalSeconds.ToString();
-			finalQuery = query.ToString().Replace("Text:","");
+			finalQuery = query.ToString();
             TopDocs results = searcher.Search(query, 100);
             return results;
         }
 
-		public List<string> SearchIndex(string queryText)
+		public List<string> SearchIndex(string queryText, bool toProcess)
 		{
 			CreateSearcher();
 			CreateParser();
 			Query query;
-			var retrievedData = DisplayResults(SearchForQuery(queryText, out query), query);
+			var retrievedData = DisplayResults(SearchForQuery(queryText, out query, toProcess), query);
 			return retrievedData;
 		}
 
