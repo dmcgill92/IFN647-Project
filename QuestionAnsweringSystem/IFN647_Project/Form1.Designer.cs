@@ -72,10 +72,10 @@
 			this.chkbxProcessing2 = new System.Windows.Forms.CheckBox();
 			this.tabDiagnostics = new System.Windows.Forms.TabPage();
 			this.btnSave = new System.Windows.Forms.Button();
-			this.txtAllResults = new System.Windows.Forms.TextBox();
-			this.txtQueryResults = new System.Windows.Forms.TextBox();
 			this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.txtAllResults = new System.Windows.Forms.RichTextBox();
+			this.txtQueryResults = new System.Windows.Forms.RichTextBox();
 			lblSearch1 = new System.Windows.Forms.Label();
 			lblSearch2 = new System.Windows.Forms.Label();
 			lblQueryResults = new System.Windows.Forms.Label();
@@ -492,11 +492,11 @@
 			// 
 			// tabDiagnostics
 			// 
+			this.tabDiagnostics.Controls.Add(this.txtQueryResults);
+			this.tabDiagnostics.Controls.Add(this.txtAllResults);
 			this.tabDiagnostics.Controls.Add(this.btnSave);
 			this.tabDiagnostics.Controls.Add(lblAllResults);
 			this.tabDiagnostics.Controls.Add(lblQueryResults);
-			this.tabDiagnostics.Controls.Add(this.txtAllResults);
-			this.tabDiagnostics.Controls.Add(this.txtQueryResults);
 			this.tabDiagnostics.Controls.Add(this.lblQueryGenTimeResult);
 			this.tabDiagnostics.Controls.Add(this.lblIndexTime);
 			this.tabDiagnostics.Controls.Add(this.lblQueryGenTime);
@@ -526,27 +526,23 @@
 			// 
 			// txtAllResults
 			// 
-			this.txtAllResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.txtAllResults.Location = new System.Drawing.Point(587, 119);
-			this.txtAllResults.Multiline = true;
+			this.txtAllResults.Location = new System.Drawing.Point(587, 120);
 			this.txtAllResults.Name = "txtAllResults";
-			this.txtAllResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.txtAllResults.ReadOnly = true;
+			this.txtAllResults.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.txtAllResults.Size = new System.Drawing.Size(549, 389);
-			this.txtAllResults.TabIndex = 26;
+			this.txtAllResults.TabIndex = 29;
+			this.txtAllResults.Text = "";
 			// 
 			// txtQueryResults
 			// 
-			this.txtQueryResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.txtQueryResults.Location = new System.Drawing.Point(20, 119);
-			this.txtQueryResults.Multiline = true;
+			this.txtQueryResults.Location = new System.Drawing.Point(20, 120);
 			this.txtQueryResults.Name = "txtQueryResults";
-			this.txtQueryResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.txtQueryResults.ReadOnly = true;
+			this.txtQueryResults.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.txtQueryResults.Size = new System.Drawing.Size(549, 389);
-			this.txtQueryResults.TabIndex = 26;
+			this.txtQueryResults.TabIndex = 29;
+			this.txtQueryResults.Text = "";
 			// 
 			// Form1
 			// 
@@ -617,9 +613,9 @@
 		private System.Windows.Forms.ImageList imglstDropdown;
 		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.Button btnSave;
-		private System.Windows.Forms.TextBox txtAllResults;
-		private System.Windows.Forms.TextBox txtQueryResults;
 		private System.Windows.Forms.TableLayoutPanel tblResults;
+		private System.Windows.Forms.RichTextBox txtQueryResults;
+		private System.Windows.Forms.RichTextBox txtAllResults;
 	}
 }
 

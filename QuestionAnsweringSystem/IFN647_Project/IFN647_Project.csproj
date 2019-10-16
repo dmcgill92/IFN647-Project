@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="JSONParser.cs" />
     <Compile Include="LuceneIndexer.cs" />
+    <Compile Include="Passage.cs" />
     <Compile Include="PorterStemmer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

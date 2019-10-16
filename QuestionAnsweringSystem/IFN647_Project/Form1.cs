@@ -6,11 +6,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Windows.Documents;
 
 namespace IFN647_Project
@@ -19,7 +19,8 @@ namespace IFN647_Project
     {
 		int numQueries = 0;
 		string indexPath;
-        List<Entry> entries;
+		Dictionary<int, Passage> collection;
+		Dictionary<int, string> queries;
         private JSONParser jsonParser = new JSONParser();
         LuceneIndexer myLuceneApp = new LuceneIndexer();
 		bool toProcess = true;
@@ -32,7 +33,9 @@ namespace IFN647_Project
             InitializeComponent();
         }
         private void Form1_Load(object sender, EventArgs e)
-		{ 
+		{
+			txtAllResults.SelectionTabs = new int[] { 60, 110, 160, 210, 290 };
+			txtQueryResults.SelectionTabs = new int[] { 60, 110, 160, 210, 290 };
 		}
 
         private void BtnBrowse_Click(object sender, EventArgs e) // Opens file browser, user selects the .json collection
@@ -43,7 +46,7 @@ namespace IFN647_Project
             {
                 var path = openFileDialog.FileName;
                 txtCollectionFile.Text = path;
-                entries = jsonParser.ReadJSON(path);
+                collection = jsonParser.ReadJSON(path, out queries);
             }
         }
 
@@ -72,8 +75,7 @@ namespace IFN647_Project
         private void BtnCreateIndex_Click(object sender, EventArgs e) // Parses .json collection and creates index files
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            entries = jsonParser.ReadJSON(txtCollectionFile.Text);
-            myLuceneApp.IndexCollection(txtIndexFile.Text + @"\Index", entries);
+			myLuceneApp.IndexCollection(txtIndexFile.Text + @"\Index", collection);
             stopwatch.Stop();
 
 			lblIndexTimeResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
@@ -151,6 +153,8 @@ namespace IFN647_Project
             int numRetrieved = retrievedData.Count;
             if (numRetrieved != 0)
             {
+
+				int currentQueryID = 0;
                 for (int i = 0; i < numRetrieved; i++)
                 {
 					string[] sArray = retrievedData[i].Split(new char[] { '‰' });
@@ -161,6 +165,12 @@ namespace IFN647_Project
 					string title = sArray[4];
 					string url = sArray[5];
 					string passage = sArray[6];
+					int passageID = Int32.Parse(sArray[7]);
+
+					if(i == 0)
+					{
+						currentQueryID = collection[passageID].query_id;
+					}
 
 					if(i<10)
 					{
@@ -214,9 +224,9 @@ namespace IFN647_Project
 					int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
 					tblResults.Padding = new Padding(0, 0, vertScrollWidth, 0);
 
-					txtAllResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
+					txtAllResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t{4}", currentQueryID.ToString("000"), passageID, rank, score, groupName));
 					txtAllResults.AppendText(Environment.NewLine);
-					txtQueryResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t\t{4}", numQueries.ToString("000"), docNum, rank, score, groupName));
+					txtQueryResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t{4}", currentQueryID.ToString("000"), passageID, rank, score, groupName));
 					txtQueryResults.AppendText(Environment.NewLine);
 				}
                 lblNumRelDocsResult.Text = numRetrieved.ToString();
@@ -291,6 +301,7 @@ namespace IFN647_Project
 			string title = sArray[4];
 			string url = sArray[5];
 			string passage = sArray[6];
+			int passageID = Int32.Parse(sArray[7]);
 			MessageBox.Show( passage + "\n\n" + url, "Full Passage", MessageBoxButtons.OK, MessageBoxIcon.None);
 		}
 
@@ -307,27 +318,30 @@ namespace IFN647_Project
 			{
 				string sFile = saveFileDialog1.FileName;
 				var resultsString = txtAllResults.Text;
-				if(saveFileDialog1.OpenFile() != null)
+				bool append = false;
+				string lastLine;
+				string[] split;
+
+				if (File.Exists(sFile))
 				{
-					var lastLine = File.ReadLines(sFile).Last();
-					var split = resultsString.Split(new string[] { lastLine }, StringSplitOptions.None);
+					append = true;
+					lastLine = File.ReadLines(sFile).Last();
+					split = resultsString.Split(new string[] { lastLine }, StringSplitOptions.None);
 					if (split.Length > 1)
 					{
 						resultsString = split.Last();
 					}
-
-					var lines = resultsString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-					File.AppendAllLines(sFile, lines);
 				}
-				else
+				using(StreamWriter sw = new StreamWriter(sFile, append))
 				{
-					var lines = resultsString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-					using(StreamWriter sw = new StreamWriter(sFile))
+					if (append)
 					{
-						foreach (string line in lines)
-						{
-							sw.WriteLine(line);
-						}
+						sw.Write("\n");
+					}
+					var lines = resultsString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+					foreach (string line in lines)
+					{
+						sw.Write(line);
 					}
 				}
 			}

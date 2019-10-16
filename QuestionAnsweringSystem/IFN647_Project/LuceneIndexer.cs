@@ -34,8 +34,8 @@ namespace IFN647_Project
         {
             luceneIndexDirectory = null;
             writer = null;
-            analyzer = new Lucene.Net.Analysis.SimpleAnalyzer();
-            parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
+			analyzer = null;
+			parser = null;
         }
 
         public void OpenIndex(string indexPath) // Opens the index directory
@@ -61,32 +61,27 @@ namespace IFN647_Project
 
         public void CreateParser() // Creates Parser
         {
-				parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
+				parser = new QueryParser(VERSION, TEXT_FN, analyzer);
         }
 
-        public void AddToIndex(Entry entry) // Indexes an entry
+        public void AddToIndex(Passage passage) // Indexes an entry
         {
-            foreach (string item in entry.answers)
-            {
-                foreach (Passage passage in entry.passages)
-                {
-					// Add all text to one field
-                    Field field = new Field(TEXT_FN, "‰" + passage.url + "‰" + passage.passage_text,Field.Store.YES, Field.Index.ANALYZED_NO_NORMS, Field.TermVector.NO);
-                    Document document = new Document();
-                    document.Add(field);
-                    writer.AddDocument(document);
-                }
-            }
-        }
+			// Add all text to one field
+			Field field = new Field(TEXT_FN, "‰" + passage.url + "‰" + passage.passage_text + "‰" + passage.passage_id, Field.Store.YES, Field.Index.ANALYZED_NO_NORMS, Field.TermVector.NO);
+			Document document = new Document();
+			document.Add(field);
+			writer.AddDocument(document);
+		}
 
-        public void IndexCollection(string filePath, List<Entry> collection) // Indexes the coillection
+        public void IndexCollection(string filePath, Dictionary<int, Passage> collection) // Indexes the coillection
         {
             OpenIndex(filePath);
             CreateAnalyser();
             CreateWriter();
-            foreach (Entry entry in collection)
+            foreach (KeyValuePair<int, Passage> keyValuePair in collection)
             {
-                AddToIndex(entry);
+				var passage = keyValuePair.Value;
+                AddToIndex(passage);
             }
             CleanUp();
         }
@@ -104,7 +99,7 @@ namespace IFN647_Project
             searcher.Dispose();
         }
 		
-        public TopDocs SearchForQuery(string querytext, out Query query, bool toProcess) // Searches index with query text
+        public TopDocs SearchForQuery(string querytext, out Lucene.Net.Search.Query query, bool toProcess) // Searches index with query text
         {
 			Stopwatch stopwatch2 = Stopwatch.StartNew();
 			querytext = querytext.ToLower();
@@ -124,30 +119,28 @@ namespace IFN647_Project
 		{
 			CreateSearcher();
 			CreateParser();
-			Query query;
+			Lucene.Net.Search.Query query;
 			var retrievedData = DisplayResults(SearchForQuery(queryText, out query, toProcess), query);
 			return retrievedData;
 		}
 
-        public List<string> DisplayResults(TopDocs results, Query query)
+        public List<string> DisplayResults(TopDocs results, Lucene.Net.Search.Query query)
         {
             int rank = 0;
             List<string> retrievedResults = new List<string>();
             foreach (ScoreDoc scoreDoc in results.ScoreDocs)
             {
-                rank++;
-                // retrieve the document from the 'ScoreDoc' object
-                Lucene.Net.Documents.Document doc = searcher.Doc(scoreDoc.Doc);
-                string myFieldValue = doc.Get(TEXT_FN).ToString();
+				rank++;
+				// retrieve the document from the 'ScoreDoc' object
+				Lucene.Net.Documents.Document doc = searcher.Doc(scoreDoc.Doc);
+				string myFieldValue = doc.Get(TEXT_FN).ToString();
 				//Console.WriteLine("Rank " + rank + " score " + scoreDoc.Score + " text " + myFieldValue);
 				//console.writeline("rank " + rank + "\n"+ myfieldvalue);
-				string[] sArray = myFieldValue.Split(new char[]{'‰'}, StringSplitOptions.RemoveEmptyEntries);
+				string[] sArray = myFieldValue.Split(new char[] { '‰' }, StringSplitOptions.RemoveEmptyEntries);
 				string title = GetTitle(sArray[0]);
 				string previewText = GeneratePreviewText(query, sArray[1]);
 				retrievedResults.Add(rank + "‰" + scoreDoc.Score + "‰" + scoreDoc.Doc + "‰" + previewText + "‰" + title + myFieldValue);
-
-
-            }
+			}
 
             return retrievedResults;
         }
@@ -170,7 +163,7 @@ namespace IFN647_Project
 			return title;
 		}
 
-		public string GeneratePreviewText(Query q, string text)
+		public string GeneratePreviewText(Lucene.Net.Search.Query q, string text)
 		{
 			QueryScorer scorer = new QueryScorer(q);
 			IFormatter formatter = new SimpleHTMLFormatter("", "");
