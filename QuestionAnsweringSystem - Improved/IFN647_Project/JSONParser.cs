@@ -29,6 +29,7 @@ namespace IFN647_Project
 				foreach (var passage in item.passages)
 				{
 					passage.query_id = item.query_id;
+					passage.query = item.query;
 					collection.Add(passage.passage_id, passage);
 				}
 			}

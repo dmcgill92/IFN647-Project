@@ -64,7 +64,6 @@
 			this.tabSearch = new System.Windows.Forms.TabPage();
 			this.pnlSearchResults = new System.Windows.Forms.Panel();
 			this.tblResults = new System.Windows.Forms.TableLayoutPanel();
-			this.imglstDropdown = new System.Windows.Forms.ImageList(this.components);
 			this.txtSearchContent2 = new System.Windows.Forms.TextBox();
 			this.btnSearch2 = new System.Windows.Forms.Button();
 			this.chkbxProcessing2 = new System.Windows.Forms.CheckBox();
@@ -72,7 +71,13 @@
 			this.txtQueryResults = new System.Windows.Forms.RichTextBox();
 			this.txtAllResults = new System.Windows.Forms.RichTextBox();
 			this.btnSave = new System.Windows.Forms.Button();
+			this.imglstDropdown = new System.Windows.Forms.ImageList(this.components);
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.chkbxQueryExpansion2 = new System.Windows.Forms.CheckBox();
+			this.cmbbxBoosting2 = new System.Windows.Forms.ComboBox();
+			this.cmbbxBoosting1 = new System.Windows.Forms.ComboBox();
+			this.chkbxQueryExpansion1 = new System.Windows.Forms.CheckBox();
+			this.lblSuggestions1 = new System.Windows.Forms.Label();
 			lblSearch1 = new System.Windows.Forms.Label();
 			lblSearch2 = new System.Windows.Forms.Label();
 			lblQueryResults = new System.Windows.Forms.Label();
@@ -220,7 +225,7 @@
 			// 
 			this.btnSearch1.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.btnSearch1.Enabled = false;
-			this.btnSearch1.Location = new System.Drawing.Point(538, 300);
+			this.btnSearch1.Location = new System.Drawing.Point(537, 368);
 			this.btnSearch1.Margin = new System.Windows.Forms.Padding(2);
 			this.btnSearch1.Name = "btnSearch1";
 			this.btnSearch1.Size = new System.Drawing.Size(78, 27);
@@ -347,6 +352,9 @@
 			// 
 			// pnlSearchHome
 			// 
+			this.pnlSearchHome.Controls.Add(this.lblSuggestions1);
+			this.pnlSearchHome.Controls.Add(this.cmbbxBoosting1);
+			this.pnlSearchHome.Controls.Add(this.chkbxQueryExpansion1);
 			this.pnlSearchHome.Controls.Add(this.chkbxProcessing1);
 			this.pnlSearchHome.Controls.Add(lblSearch1);
 			this.pnlSearchHome.Controls.Add(this.txtSearchContent1);
@@ -361,7 +369,7 @@
 			// 
 			this.chkbxProcessing1.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.chkbxProcessing1.AutoSize = true;
-			this.chkbxProcessing1.Location = new System.Drawing.Point(514, 263);
+			this.chkbxProcessing1.Location = new System.Drawing.Point(514, 282);
 			this.chkbxProcessing1.Name = "chkbxProcessing1";
 			this.chkbxProcessing1.Size = new System.Drawing.Size(127, 17);
 			this.chkbxProcessing1.TabIndex = 6;
@@ -392,8 +400,8 @@
 			// 
 			// tabSearch
 			// 
-			this.tabSearch.Controls.Add(this.pnlSearchResults);
 			this.tabSearch.Controls.Add(this.pnlSearchHome);
+			this.tabSearch.Controls.Add(this.pnlSearchResults);
 			this.tabSearch.Location = new System.Drawing.Point(4, 22);
 			this.tabSearch.Name = "tabSearch";
 			this.tabSearch.Padding = new System.Windows.Forms.Padding(3);
@@ -404,12 +412,14 @@
 			// 
 			// pnlSearchResults
 			// 
+			this.pnlSearchResults.Controls.Add(this.cmbbxBoosting2);
 			this.pnlSearchResults.Controls.Add(this.tblResults);
 			this.pnlSearchResults.Controls.Add(this.txtFinalQuery);
 			this.pnlSearchResults.Controls.Add(this.lblFinalQuery);
 			this.pnlSearchResults.Controls.Add(lblSearch2);
 			this.pnlSearchResults.Controls.Add(this.txtSearchContent2);
 			this.pnlSearchResults.Controls.Add(this.btnSearch2);
+			this.pnlSearchResults.Controls.Add(this.chkbxQueryExpansion2);
 			this.pnlSearchResults.Controls.Add(this.chkbxProcessing2);
 			this.pnlSearchResults.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.pnlSearchResults.Location = new System.Drawing.Point(3, 3);
@@ -433,13 +443,6 @@
 			this.tblResults.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tblResults.Size = new System.Drawing.Size(1133, 424);
 			this.tblResults.TabIndex = 38;
-			// 
-			// imglstDropdown
-			// 
-			this.imglstDropdown.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imglstDropdown.ImageStream")));
-			this.imglstDropdown.TransparentColor = System.Drawing.Color.Transparent;
-			this.imglstDropdown.Images.SetKeyName(0, "expand-arrow-32.png");
-			this.imglstDropdown.Images.SetKeyName(1, "collapse-arrow-32.png");
 			// 
 			// txtSearchContent2
 			// 
@@ -525,6 +528,69 @@
 			this.btnSave.UseVisualStyleBackColor = true;
 			this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
 			// 
+			// imglstDropdown
+			// 
+			this.imglstDropdown.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imglstDropdown.ImageStream")));
+			this.imglstDropdown.TransparentColor = System.Drawing.Color.Transparent;
+			this.imglstDropdown.Images.SetKeyName(0, "expand-arrow-32.png");
+			this.imglstDropdown.Images.SetKeyName(1, "collapse-arrow-32.png");
+			// 
+			// chkbxQueryExpansion2
+			// 
+			this.chkbxQueryExpansion2.AutoSize = true;
+			this.chkbxQueryExpansion2.Location = new System.Drawing.Point(116, 59);
+			this.chkbxQueryExpansion2.Name = "chkbxQueryExpansion2";
+			this.chkbxQueryExpansion2.Size = new System.Drawing.Size(105, 17);
+			this.chkbxQueryExpansion2.TabIndex = 35;
+			this.chkbxQueryExpansion2.Text = "Query expansion";
+			this.chkbxQueryExpansion2.UseVisualStyleBackColor = true;
+			this.chkbxQueryExpansion2.CheckedChanged += new System.EventHandler(this.ChkbxQueryExpansion2_CheckedChanged);
+			// 
+			// cmbbxBoosting2
+			// 
+			this.cmbbxBoosting2.FormattingEnabled = true;
+			this.cmbbxBoosting2.Items.AddRange(new object[] {
+            "No Boosting",
+            "Title Boosting",
+            "Query Boosting"});
+			this.cmbbxBoosting2.Location = new System.Drawing.Point(12, 83);
+			this.cmbbxBoosting2.Name = "cmbbxBoosting2";
+			this.cmbbxBoosting2.Size = new System.Drawing.Size(209, 21);
+			this.cmbbxBoosting2.TabIndex = 39;
+			this.cmbbxBoosting2.SelectedIndexChanged += new System.EventHandler(this.CmbbxBoosting2_SelectedIndexChanged);
+			// 
+			// cmbbxBoosting1
+			// 
+			this.cmbbxBoosting1.FormattingEnabled = true;
+			this.cmbbxBoosting1.Items.AddRange(new object[] {
+            "No Boosting",
+            "Title Boosting",
+            "Query Boosting"});
+			this.cmbbxBoosting1.Location = new System.Drawing.Point(473, 338);
+			this.cmbbxBoosting1.Name = "cmbbxBoosting1";
+			this.cmbbxBoosting1.Size = new System.Drawing.Size(209, 21);
+			this.cmbbxBoosting1.TabIndex = 41;
+			this.cmbbxBoosting1.SelectedIndexChanged += new System.EventHandler(this.CmbbxBoosting1_SelectedIndexChanged);
+			// 
+			// chkbxQueryExpansion1
+			// 
+			this.chkbxQueryExpansion1.AutoSize = true;
+			this.chkbxQueryExpansion1.Location = new System.Drawing.Point(525, 310);
+			this.chkbxQueryExpansion1.Name = "chkbxQueryExpansion1";
+			this.chkbxQueryExpansion1.Size = new System.Drawing.Size(105, 17);
+			this.chkbxQueryExpansion1.TabIndex = 40;
+			this.chkbxQueryExpansion1.Text = "Query expansion";
+			this.chkbxQueryExpansion1.UseVisualStyleBackColor = true;
+			this.chkbxQueryExpansion1.CheckedChanged += new System.EventHandler(this.ChkbxQueryExpansion1_CheckedChanged);
+			// 
+			// lblSuggestions1
+			// 
+			this.lblSuggestions1.Location = new System.Drawing.Point(329, 255);
+			this.lblSuggestions1.Name = "lblSuggestions1";
+			this.lblSuggestions1.Size = new System.Drawing.Size(496, 20);
+			this.lblSuggestions1.TabIndex = 42;
+			this.lblSuggestions1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -593,6 +659,11 @@
 		private System.Windows.Forms.TableLayoutPanel tblResults;
 		private System.Windows.Forms.RichTextBox txtQueryResults;
 		private System.Windows.Forms.RichTextBox txtAllResults;
+		private System.Windows.Forms.ComboBox cmbbxBoosting1;
+		private System.Windows.Forms.CheckBox chkbxQueryExpansion1;
+		private System.Windows.Forms.ComboBox cmbbxBoosting2;
+		private System.Windows.Forms.CheckBox chkbxQueryExpansion2;
+		private System.Windows.Forms.Label lblSuggestions1;
 	}
 }
 

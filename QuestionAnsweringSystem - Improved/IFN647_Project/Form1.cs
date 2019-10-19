@@ -24,6 +24,8 @@ namespace IFN647_Project
         private JSONParser jsonParser = new JSONParser();
         LuceneIndexer myLuceneApp = new LuceneIndexer();
 		bool toProcess = true;
+		bool queryExpansion = false;
+		int boostIndex = 0;
 		List<Result> relevantDocuments;
 		string groupName = "ImprovedSystem";
 		string queryText = "";
@@ -36,6 +38,8 @@ namespace IFN647_Project
 		{
 			txtAllResults.SelectionTabs = new int[] { 60, 110, 160, 210, 290 };
 			txtQueryResults.SelectionTabs = new int[] { 60, 110, 160, 210, 290 };
+			cmbbxBoosting1.SelectedIndex = 0;
+			cmbbxBoosting2.SelectedIndex = 0;
 		}
 
         private void BtnBrowse_Click(object sender, EventArgs e) // Opens file browser, user selects the .json collection
@@ -82,10 +86,9 @@ namespace IFN647_Project
 
         private void BtnCreateIndex_Click(object sender, EventArgs e) // Parses .json collection and creates index files
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
+			Stopwatch stopwatch = Stopwatch.StartNew();
 			myLuceneApp.IndexCollection(txtIndexFile.Text + @"\Index", collection);
             stopwatch.Stop();
-
 			lblIndexTimeResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
 			pnlIndex.Hide();
 			pnlSearch.Show();
@@ -102,6 +105,18 @@ namespace IFN647_Project
 			{
 				btnSearch1.Enabled = true;
 				btnSearch2.Enabled = true;
+				var suggestions = myLuceneApp.GetSuggestions(txtSearchContent1.Text);
+				if (suggestions != null && suggestions.Length > 0)
+				{
+					var max = suggestions.Length >= 3 ? 3 : suggestions.Length;
+					var suggestionsJoined = string.Join(", ", suggestions, 0, max);
+					lblSuggestions1.Show();
+					lblSuggestions1.Text = String.Format("Did you mean: {0}", suggestionsJoined);
+				}
+				else
+				{
+					lblSuggestions1.Hide();
+				}
 			}
 			else
 			{
@@ -145,7 +160,7 @@ namespace IFN647_Project
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-			relevantDocuments = myLuceneApp.SearchIndex(queryText, toProcess);
+			relevantDocuments = myLuceneApp.SearchIndex(queryText, toProcess, queryExpansion, boostIndex);
 				
             myLuceneApp.CleanUpSearch();
 			lblQueryGenTimeResult.Text = myLuceneApp.queryTime;
@@ -243,6 +258,27 @@ namespace IFN647_Project
 			((RichTextBox)sender).Height = e.NewRectangle.Height + 5;
 		}
 
+		private void ChkbxProcessing1_CheckedChanged(object sender, EventArgs e)
+		{
+			toProcess = !chkbxProcessing1.Checked;
+
+			if (chkbxProcessing2.Checked != chkbxProcessing1.Checked)
+			{
+				chkbxProcessing2.Checked = chkbxProcessing1.Checked;
+			}
+
+			if(toProcess == false)
+			{
+				chkbxQueryExpansion1.Enabled = false;
+				chkbxQueryExpansion2.Enabled = false;
+			}
+			else
+			{
+				chkbxQueryExpansion1.Enabled = true;
+				chkbxQueryExpansion2.Enabled = true;
+			}
+		}
+
 		private void ChkbxProcessing2_CheckedChanged(object sender, EventArgs e)
 		{
 			toProcess = !chkbxProcessing2.Checked;
@@ -251,15 +287,16 @@ namespace IFN647_Project
 			{
 				chkbxProcessing1.Checked = chkbxProcessing2.Checked;
 			}
-		}
 
-		private void ChkbxProcessing1_CheckedChanged(object sender, EventArgs e)
-		{
-			toProcess = !chkbxProcessing1.Checked;
-
-			if (chkbxProcessing2.Checked != chkbxProcessing1.Checked)
+			if (toProcess == false)
 			{
-				chkbxProcessing2.Checked = chkbxProcessing1.Checked;
+				chkbxQueryExpansion1.Enabled = false;
+				chkbxQueryExpansion2.Enabled = false;
+			}
+			else
+			{
+				chkbxQueryExpansion1.Enabled = true;
+				chkbxQueryExpansion2.Enabled = true;
 			}
 		}
 
@@ -273,7 +310,45 @@ namespace IFN647_Project
 			MessageBox.Show( result.passage + "\n\n" + result.url, "Full Passage", MessageBoxButtons.OK, MessageBoxIcon.None);
 		}
 
-		
+		private void ChkbxQueryExpansion1_CheckedChanged(object sender, EventArgs e)
+		{
+			queryExpansion = chkbxQueryExpansion1.Checked;
+			if(chkbxQueryExpansion2.Checked != chkbxQueryExpansion1.Checked)
+			{
+				chkbxQueryExpansion2.Checked = chkbxQueryExpansion1.Checked;
+			}
+
+			if (queryExpansion == true)
+			{
+				chkbxProcessing1.Enabled = false;
+				chkbxProcessing2.Enabled = false;
+			}
+			else
+			{
+				chkbxProcessing1.Enabled = true;
+				chkbxProcessing2.Enabled = true;
+			}
+		}
+
+		private void ChkbxQueryExpansion2_CheckedChanged(object sender, EventArgs e)
+		{
+			queryExpansion = chkbxQueryExpansion2.Checked;
+			if (chkbxQueryExpansion1.Checked != chkbxQueryExpansion2.Checked)
+			{
+				chkbxQueryExpansion1.Checked = chkbxQueryExpansion2.Checked;
+			}
+
+			if (queryExpansion == true)
+			{
+				chkbxProcessing1.Enabled = false;
+				chkbxProcessing2.Enabled = false;
+			}
+			else
+			{
+				chkbxProcessing1.Enabled = true;
+				chkbxProcessing2.Enabled = true;
+			}
+		}
 
 		private void BtnSave_Click(object sender, EventArgs e)
 		{
@@ -312,6 +387,26 @@ namespace IFN647_Project
 						sw.Write(line + "\n");
 					}
 				}
+			}
+		}
+
+		private void CmbbxBoosting1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			boostIndex = cmbbxBoosting1.SelectedIndex;
+
+			if(cmbbxBoosting2.SelectedIndex != cmbbxBoosting1.SelectedIndex)
+			{
+				cmbbxBoosting2.SelectedIndex = cmbbxBoosting1.SelectedIndex;
+			}
+		}
+
+		private void CmbbxBoosting2_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			boostIndex = cmbbxBoosting2.SelectedIndex;
+
+			if (cmbbxBoosting1.SelectedIndex != cmbbxBoosting2.SelectedIndex)
+			{
+				cmbbxBoosting1.SelectedIndex = cmbbxBoosting2.SelectedIndex;
 			}
 		}
 	}

@@ -13,5 +13,6 @@ namespace IFN647_Project
 		public string passage_text { get; set; }
 		public int passage_id { get; set; }
 		public int query_id { get; set; }
+		public string query { get; set; }
 	}
 }
