@@ -17,13 +17,14 @@ namespace IFN647_Project
 {
     public partial class Form1 : Form
     {
+		int numQueries = 0;
 		string indexPath;
 		Dictionary<int, Passage> collection;
 		Dictionary<int, string> queries;
         private JSONParser jsonParser = new JSONParser();
         LuceneIndexer myLuceneApp = new LuceneIndexer();
 		bool toProcess = true;
-		List<string> relevantDocuments;
+		List<Result> relevantDocuments;
 		string groupName = "ImprovedSystem";
 		string queryText = "";
 
@@ -45,7 +46,15 @@ namespace IFN647_Project
             {
                 var path = openFileDialog.FileName;
                 txtCollectionFile.Text = path;
-                collection = jsonParser.ReadJSON(path, out queries);
+				if (collection != null)
+				{
+					collection.Clear();
+				}
+				if (queries != null)
+				{
+					queries.Clear();
+				}
+				collection = jsonParser.ReadJSON(path, out queries);
             }
         }
 
@@ -79,10 +88,6 @@ namespace IFN647_Project
 
 			lblIndexTimeResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
 			pnlIndex.Hide();
-			var location = chkbxProcessing2.Location;
-			chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
-			location = btnSearch2.Location;
-			btnSearch2.Location = new Point(location.X, location.Y - 45);
 			pnlSearch.Show();
 			pnlSearchHome.Show();
         }
@@ -126,6 +131,7 @@ namespace IFN647_Project
 
 		private void BtnSearch_Click(object sender, EventArgs e)
 		{
+			numQueries++;
 			txtQueryResults.Text = string.Empty;
 			if(pnlSearchHome.Visible)
 			{
@@ -137,101 +143,97 @@ namespace IFN647_Project
 			tblResults.RowStyles.Clear();
 			queryText = txtSearchContent1.Text;
 
-            Stopwatch stopwatch = Stopwatch.StartNew(); 
-				
-			var retrievedData = myLuceneApp.SearchIndex(queryText, toProcess);
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
-			relevantDocuments = new List<string>(retrievedData);
+			relevantDocuments = myLuceneApp.SearchIndex(queryText, toProcess);
 				
             myLuceneApp.CleanUpSearch();
 			lblQueryGenTimeResult.Text = myLuceneApp.queryTime;
 			txtFinalQuery.Text = myLuceneApp.finalQuery;
 
             //Data categorize
-            int numRetrieved = retrievedData.Count;
+            int numRetrieved = relevantDocuments.Count;
             if (numRetrieved != 0)
             {
-
 				int currentQueryID = 0;
                 for (int i = 0; i < numRetrieved; i++)
                 {
-					string[] sArray = retrievedData[i].Split(new char[] { '‰' });
-					string rank = sArray[0];
-					string score = sArray[1];
-					string docNum = sArray[2];
-					string previewText = sArray[3];
-					string title = sArray[4];
-					string url = sArray[5];
-					string passage = sArray[6];
-					int passageID = Int32.Parse(sArray[7]);
+					var result = relevantDocuments[i];
+					result.passage = collection[result.passage_id].passage_text;
+					result.previewText = myLuceneApp.GeneratePreviewText(result.passage);
 
 					if(i == 0)
 					{
-						currentQueryID = collection[passageID].query_id;
+						currentQueryID = collection[result.passage_id].query_id;
 					}
 
-					if(i<10)
+					txtAllResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t{4}", currentQueryID.ToString("000"), result.passage_id, result.rank, result.score, groupName));
+					txtAllResults.AppendText(Environment.NewLine);
+					txtQueryResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t{4}", currentQueryID.ToString("000"), result.passage_id, result.rank, result.score, groupName));
+					txtQueryResults.AppendText(Environment.NewLine);
+				}
+
+				for( int i = 0; i < numRetrieved; i++)
+				{
+					if(i >= 10)
 					{
-						var rtResult = new RichTextBox();
-						rtResult.Name = i.ToString();
-						rtResult.Clear();
-						rtResult.DeselectAll();
-						rtResult.SelectionFont = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold);
-						rtResult.AppendText(title);
-						rtResult.AppendText(Environment.NewLine);
-						rtResult.SelectionFont = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Regular);
-						rtResult.AppendText(previewText);
-						rtResult.AppendText(Environment.NewLine);
-						rtResult.AppendText(url);
-						rtResult.Anchor = (AnchorStyles.Left | AnchorStyles.Right);
-						rtResult.ScrollBars = RichTextBoxScrollBars.None;
-						rtResult.WordWrap = true;
-						rtResult.Multiline = true;
-						rtResult.ReadOnly = true;
-						rtResult.Dock = DockStyle.Top;
-						rtResult.ContentsResized += rtb_ContentsResized;
-						rtResult.DoubleClick += rtb_DoubleClick;
-
-						// Highlight text
-						string[] words = queryText.Split(' ');
-						foreach (string word in words)
-						{
-							int startindex = 0;
-							while (startindex < rtResult.TextLength)
-							{
-								int wordstartIndex = rtResult.Find(word, startindex, RichTextBoxFinds.None);
-								if (wordstartIndex != -1)
-								{
-									rtResult.SelectionStart = wordstartIndex;
-									rtResult.SelectionLength = word.Length;
-									rtResult.SelectionBackColor = Color.Yellow;
-								}
-								else
-									break;
-								startindex += wordstartIndex + word.Length;
-							}
-						}
-
-						tblResults.RowCount = i + 1;
-						tblResults.RowStyles.Add( new RowStyle(SizeType.AutoSize));
-						tblResults.Controls.Add(rtResult, 0, i);
+						break;
 					}
+					var result = relevantDocuments[i];
+					var rtResult = new RichTextBox();
+					rtResult.Name = i.ToString();
+					rtResult.Clear();
+					rtResult.DeselectAll();
+					rtResult.SelectionFont = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold);
+					rtResult.AppendText(result.title);
+					rtResult.AppendText(Environment.NewLine);
+					rtResult.SelectionFont = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Regular);
+					rtResult.AppendText(result.previewText);
+					rtResult.AppendText(Environment.NewLine);
+					rtResult.AppendText(result.url);
+					rtResult.Anchor = (AnchorStyles.Left | AnchorStyles.Right);
+					rtResult.ScrollBars = RichTextBoxScrollBars.None;
+					rtResult.WordWrap = true;
+					rtResult.Multiline = true;
+					rtResult.ReadOnly = true;
+					rtResult.Dock = DockStyle.Top;
+					rtResult.ContentsResized += rtb_ContentsResized;
+					rtResult.DoubleClick += rtb_DoubleClick;
+
+					// Highlight text
+					string[] words = queryText.Split(' ');
+					foreach (string word in words)
+					{
+						int startindex = 0;
+						while (startindex < rtResult.TextLength)
+						{
+							int wordstartIndex = rtResult.Find(word, startindex, RichTextBoxFinds.None);
+							if (wordstartIndex != -1)
+							{
+								rtResult.SelectionStart = wordstartIndex;
+								rtResult.SelectionLength = word.Length;
+								rtResult.SelectionBackColor = Color.Yellow;
+							}
+							else
+								break;
+							startindex += wordstartIndex + word.Length;
+						}
+					}
+
+					tblResults.RowCount = i + 1;
+					tblResults.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+					tblResults.Controls.Add(rtResult, 0, i);
 
 					tblResults.AutoScroll = false;
 					tblResults.AutoScroll = true;
 					int vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
 					tblResults.Padding = new Padding(0, 0, vertScrollWidth, 0);
-
-					txtAllResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t{4}", currentQueryID.ToString("000"), passageID, rank, score, groupName));
-					txtAllResults.AppendText(Environment.NewLine);
-					txtQueryResults.AppendText(String.Format("{0}\tQ0\t{1}\t{2}\t{3}\t{4}", currentQueryID.ToString("000"), passageID, rank, score, groupName));
-					txtQueryResults.AppendText(Environment.NewLine);
 				}
+
                 lblNumRelDocsResult.Text = numRetrieved.ToString();
                 stopwatch.Stop();
                 lblSearchingTimesResult.Text = stopwatch.Elapsed.TotalSeconds.ToString();
             }
-
 			pnlSearchHome.Hide();
 			pnlSearch.Show();
         }
@@ -239,30 +241,6 @@ namespace IFN647_Project
 		private void rtb_ContentsResized(object sender, ContentsResizedEventArgs e)
 		{
 			((RichTextBox)sender).Height = e.NewRectangle.Height + 5;
-		}
-
-		private void BtnSearchDropdown_Click(object sender, EventArgs e)
-		{
-			if(btnSearchDropdown.ImageIndex == 0)
-			{
-				btnSearchDropdown.ImageIndex = 1;
-				lblFinalQuery.Show();
-				txtFinalQuery.Show();
-				var location = chkbxProcessing2.Location;
-				chkbxProcessing2.Location = new Point(location.X, location.Y + 45);
-				location = btnSearch2.Location;
-				btnSearch2.Location = new Point(location.X, location.Y + 45);
-			}
-			else
-			{
-				btnSearchDropdown.ImageIndex = 0;
-				lblFinalQuery.Hide();
-				txtFinalQuery.Hide();
-				var location = chkbxProcessing2.Location;
-				chkbxProcessing2.Location = new Point(location.X, location.Y - 45);
-				location = btnSearch2.Location;
-				btnSearch2.Location = new Point(location.X, location.Y - 45);
-			}
 		}
 
 		private void ChkbxProcessing2_CheckedChanged(object sender, EventArgs e)
@@ -291,16 +269,8 @@ namespace IFN647_Project
 			var index = Int32.Parse(rtBox.Name);
 
 			var result = relevantDocuments[index];
-			var sArray = result.Split(new char[] { '‰' });
-			string rank = sArray[0];
-			string score = sArray[1];
-			string docNum = sArray[2];
-			string previewText = sArray[3];
-			string title = sArray[4];
-			string url = sArray[5];
-			string passage = sArray[6];
-			int passageID = Int32.Parse(sArray[7]);
-			MessageBox.Show( passage + "\n\n" + url, "Full Passage", MessageBoxButtons.OK, MessageBoxIcon.None);
+
+			MessageBox.Show( result.passage + "\n\n" + result.url, "Full Passage", MessageBoxButtons.OK, MessageBoxIcon.None);
 		}
 
 		
@@ -339,7 +309,7 @@ namespace IFN647_Project
 					var lines = resultsString.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string line in lines)
 					{
-						sw.Write(line);
+						sw.Write(line + "\n");
 					}
 				}
 			}
