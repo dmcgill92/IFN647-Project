@@ -317,6 +317,7 @@
             this.txtFinalQuery.Multiline = true;
             this.txtFinalQuery.Name = "txtFinalQuery";
             this.txtFinalQuery.ReadOnly = true;
+            this.txtFinalQuery.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtFinalQuery.Size = new System.Drawing.Size(1296, 117);
             this.txtFinalQuery.TabIndex = 20;
             // 

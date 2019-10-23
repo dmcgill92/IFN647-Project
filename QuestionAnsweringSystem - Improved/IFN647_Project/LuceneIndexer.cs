@@ -56,7 +56,7 @@ namespace IFN647_Project
 
         public void CreateAnalyser() // Creates analyzer
         {
-			analyzer = new SnowballAnalyzer(VERSION, "English");
+			analyzer = new SnowballAnalyzer(VERSION, "English", StandardAnalyzer.STOP_WORDS_SET);
 			//analyzer = new StandardAnalyzer(VERSION);
         }
 
