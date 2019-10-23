@@ -10,8 +10,13 @@ namespace IFN647_Project
 {
 	public class NewSimilarity : DefaultSimilarity
 	{
+        public override float Idf(int docFreq, int numDocs)
+        {
+            return 1;
+        }
 
-		public override float LengthNorm(string fieldName, int numTerms)
+
+        public override float LengthNorm(string fieldName, int numTerms)
 		{
 			return 1;
 		}

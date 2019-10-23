@@ -112,10 +112,13 @@ namespace IFN647_Project
 					var suggestionsJoined = string.Join(", ", suggestions, 0, max);
 					lblSuggestions1.Show();
 					lblSuggestions1.Text = String.Format("Did you mean: {0}", suggestionsJoined);
+                    lblSuggestions2.Show();
+                    lblSuggestions2.Text = lblSuggestions1.Text;
 				}
 				else
 				{
 					lblSuggestions1.Hide();
+                    lblSuggestions2.Hide();
 				}
 			}
 			else

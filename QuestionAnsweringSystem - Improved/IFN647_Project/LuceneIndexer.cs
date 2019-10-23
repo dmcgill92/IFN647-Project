@@ -64,7 +64,7 @@ namespace IFN647_Project
         {
             IndexWriter.MaxFieldLength mfl = new IndexWriter.MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
             writer = new IndexWriter(luceneIndexDirectory, analyzer, true, mfl);
-			//writer.SetSimilarity(newSimilarity);
+			writer.SetSimilarity(newSimilarity);
         }
 
 		public void CreateReader()
@@ -75,7 +75,7 @@ namespace IFN647_Project
         public void CreateSearcher() // Creates Searcher
         {
             searcher = new IndexSearcher(luceneIndexDirectory);
-			//searcher.Similarity = newSimilarity;
+			searcher.Similarity = newSimilarity;
         }
 
         public void CreateParser(int boostIndex) // Creates Parser
