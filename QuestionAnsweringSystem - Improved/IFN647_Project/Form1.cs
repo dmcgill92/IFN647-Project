@@ -27,7 +27,7 @@ namespace IFN647_Project
 		bool queryExpansion = false;
 		int boostIndex = 0;
 		List<Result> relevantDocuments;
-		string groupName = "ImprovedSystem";
+		string groupName = "n10357262_n10147675_n10311092_n8440999_ImprovedSystem";
 		string queryText = "";
 
         public Form1()

@@ -24,7 +24,7 @@ namespace IFN647_Project
         LuceneIndexer myLuceneApp = new LuceneIndexer();
 		bool toProcess = true;
 		List<string> relevantDocuments;
-		string groupName = "ImprovedSystem";
+		string groupName = "n10357262_n10147675_n10311092_n8440999_BaselineSystem";
 		string queryText = "";
 
         public Form1()
